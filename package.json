@@ -1,0 +1,30 @@
+{
+  "name": "ideosphere",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node -r dotenv/config ./bin/www",
+    "dev": "nodemon -r dotenv/config ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilham-asgarli/node.js_ideosphere.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilham-asgarli/node.js_ideosphere/issues"
+  },
+  "homepage": "https://github.com/ilham-asgarli/node.js_ideosphere#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "debug": "~2.6.9",
+    "dotenv": "^10.0.0",
+    "express": "^5.0.0-alpha.8",
+    "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.1",
+    "node-cron": "^3.0.0"
+  }
+}
