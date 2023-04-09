@@ -2,10 +2,10 @@
   "name": "ideosphere",
   "version": "1.0.0",
   "description": "Node.js project.",
-  "main": "./src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node ./dist/index.js",
-    "dev": "nodemon ./src/index.ts",
+    "start": "tsc && node dist/index.js",
+    "dev": "nodemon src/index.ts",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix"
   },
