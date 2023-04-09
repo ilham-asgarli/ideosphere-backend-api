@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "description": "Node.js project.",
   "main": "dist/index.js",
+  "keywords": [
+    "sequelize",
+    "typescript"
+  ],
   "scripts": {
     "start": "tsc && node dist/index.js",
     "dev": "nodemon src/index.ts",
+    "build": "tsc",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix"
   },
