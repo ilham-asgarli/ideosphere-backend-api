@@ -2,14 +2,24 @@ import express, { Application } from 'express'
 import path from 'path'
 import loaders from './loaders'
 import routes from './routes'
+import rateLimiter from 'express-rate-limit'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import xss from 'xss-clean'
 
 const app: Application = express()
 
-app.use(cors())
+app.use(
+    rateLimiter({
+        windowMs: 15 * 60 * 1000,
+        max: 60,
+    })
+);
 app.use(helmet())
+app.use(cors())
+app.use(xss())
+
 app.use(morgan('tiny'))
 
 app.use(express.json())
