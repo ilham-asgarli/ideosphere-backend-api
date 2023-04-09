@@ -4,8 +4,9 @@
   "description": "Node.js project.",
   "main": "dist/index.js",
   "keywords": [
-    "sequelize",
-    "typescript"
+    "typescript",
+    "sequelize"
+    
   ],
   "scripts": {
     "start": "tsc && node dist/index.js",
