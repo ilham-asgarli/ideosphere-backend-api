@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     dataIsNull: 'Data yok!',
     dataListed: 'Data listelendi',
     successfulLogin: 'Giriş başarılı',

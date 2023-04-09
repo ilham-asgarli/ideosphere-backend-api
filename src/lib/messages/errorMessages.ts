@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     objectIdIsNotValid: 'ObjectId doğru formatta değil',
     passwordError: 'Parola hatası',
     userAlreadyExists: 'Kullanıcı adı daha önce kullanılmış',
