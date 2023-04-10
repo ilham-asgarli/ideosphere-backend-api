@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
-import { User } from '../db/models/user.model';
+import { User } from '../../../db/models/user.model';
 
 class UserController {
   public static async login(req: Request, res: Response): Promise<void> {
