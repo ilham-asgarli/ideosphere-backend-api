@@ -8,6 +8,8 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import xss from 'xss-clean'
 
+loaders()
+
 const app: Application = express()
 
 app.use(
@@ -23,12 +25,9 @@ app.use(xss())
 app.use(morgan('tiny'))
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/api', routes)
-
-loaders()
 
 const PORT: Number = Number(process.env.PORT) || 3000
 app.listen(PORT, () => {

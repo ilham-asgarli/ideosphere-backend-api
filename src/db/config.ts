@@ -11,4 +11,4 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   dialect: dbDriver,
 })
 
-export default sequelize
+export { sequelize }

@@ -1,7 +1,7 @@
-import loadConfig from './loadConfig'
-import connectDatabase from './databaseConnection'
+import env from './env.loader'
+import database from './database.loader'
 
 export default () => {
-    loadConfig()
-    connectDatabase()
+    // env()
+    database()
 }

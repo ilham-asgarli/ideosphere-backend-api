@@ -1,1 +1,1 @@
-export {default as Ingredient} from "./ingredient.model";
+export { User } from "./user.model";
