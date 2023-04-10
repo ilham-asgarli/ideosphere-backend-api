@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { User } from '../db/models';
+import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
+import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
 
 class UserController {
   public static async login(req: Request, res: Response): Promise<void> {
@@ -20,14 +22,14 @@ class UserController {
       return;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await verifyPasswordHash(password, user.password);
 
     if (!isPasswordValid) {
       res.status(401).json({ message: 'Invalid email or password.' });
       return;
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || '');
+    const token = generateJwtToken({ userId: user.id });
 
     res.json({ token });
   }
@@ -41,11 +43,11 @@ class UserController {
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = generatePasswordHash(password);
 
     try {
       const user = await User.create({ id, email, password: hashedPassword });
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || '');
+      const token = generateJwtToken({ userId: user.id });
       res.json({ token });
     } catch (err) {
       console.error(err);
@@ -64,7 +66,7 @@ class UserController {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { userId: string };
+      const decoded = verifyJwtToken(token)  as { userId: string };
       const user = await User.findByPk(decoded.userId);
 
       if (!user) {
@@ -72,7 +74,7 @@ class UserController {
         return;
       }
 
-      const passwordHash = await bcrypt.hash(password, 10);
+      const passwordHash = generatePasswordHash(password);
 
       await user.update({ password: passwordHash });
       res.json({ message: 'Password reset successfully.' });
