@@ -7,7 +7,7 @@ class User extends Model {
   public user_type_id!: number;
   public email!: string;
   public password!: string;
-  public phone_number!: string;
+  public phone_number?: string;
 
   public readonly created_at!: Date;
   public readonly updated_at!: Date;

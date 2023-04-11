@@ -25,8 +25,14 @@ EventLocation.init({
             key: 'id',
         },
     },
-    latitude: DataTypes.DOUBLE,
-    longitude: DataTypes.DOUBLE,
+    latitude: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+    },
+    longitude: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+    },
 }, {
     sequelize,
     tableName: 'event_locations',

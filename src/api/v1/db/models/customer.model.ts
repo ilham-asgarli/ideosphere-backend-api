@@ -7,9 +7,9 @@ class Customer extends Model {
     public id!: string;
     public user_id!: string;
     public gender_id!: number;
-    public firstname!: string;
-    public lastname!: string;
-    public biography!: string;
+    public firstname?: string;
+    public lastname?: string;
+    public biography?: string;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;

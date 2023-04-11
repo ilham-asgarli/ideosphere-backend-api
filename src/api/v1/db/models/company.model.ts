@@ -5,8 +5,8 @@ import { User } from './user.model';
 class Company extends Model {
     public id!: string;
     public user_id!: string;
-    public name!: string;
-    public description!: string;
+    public name?: string;
+    public description?: string;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;

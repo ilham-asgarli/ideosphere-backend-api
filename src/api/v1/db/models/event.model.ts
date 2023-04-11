@@ -9,15 +9,15 @@ class Event extends Model {
     public gender_id!: number;
     public organizer_id!: string;
     public chat_id!: string;
-    public name!: string;
-    public description!: string;
-    public address!: string;
-    public start_time!: Date;
-    public end_time!: Date;
-    public max_age!: number;
-    public min_age!: number;
-    public entry_fee!: number;
-    public participant_capacity!: number;
+    public name?: string;
+    public description?: string;
+    public address?: string;
+    public start_time?: Date;
+    public end_time?: Date;
+    public max_age?: number;
+    public min_age?: number;
+    public entry_fee?: number;
+    public participant_capacity?: number;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;

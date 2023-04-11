@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { User } from '../db/models';
-import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
-import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
+import { User } from '../../db/models';
+import { generatePasswordHash, verifyPasswordHash } from '../../helpers/hash.helper';
+import { generateJwtToken, verifyJwtToken } from '../../helpers/jwt.helper';
 
-class UserController {
+class AuthController {
   public static async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
@@ -81,4 +81,4 @@ class UserController {
   }
 }
 
-export { UserController };
+export { AuthController };

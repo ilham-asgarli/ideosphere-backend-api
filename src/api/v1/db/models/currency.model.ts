@@ -1,12 +1,10 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
-import { User } from './user.model';
 
 class Currency extends Model {
-    public id!: string;
-    public user_id!: string;
+    public id!: number;
     public name!: string;
-    public description!: string;
+    public iso_code!: string;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;
@@ -20,8 +18,12 @@ Currency.init({
     },
     name: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
-    iso_code: DataTypes.STRING,
+    iso_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 }, {
     sequelize,
     tableName: 'currencies',
