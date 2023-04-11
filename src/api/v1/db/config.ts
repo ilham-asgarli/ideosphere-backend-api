@@ -9,6 +9,9 @@ const dbDriver = process.env.DB_DRIVER as Dialect
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
   dialect: dbDriver,
+  define: {
+    underscored: true,
+  },
 })
 
 export { sequelize }

@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
+import { UserType } from './user_type.model';
 
 class User extends Model {
   public id!: string;
@@ -8,29 +9,48 @@ class User extends Model {
   public password!: string;
   public phone_number!: string;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly created_at!: Date;
+  public readonly updated_at!: Date;
 }
 
 User.init({
   id: {
-    type: DataTypes.STRING(128),
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  user_type_id: DataTypes.INTEGER,
+  user_type_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: UserType,
+      key: 'id',
+    },
+  },
   email: {
-    type: DataTypes.STRING(128),
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
+    validate: {
+      isEmail: true,
+    },
   },
   password: {
-    type: DataTypes.STRING(128),
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  phone_number: DataTypes.STRING(128),
+  phone_number: {
+    type: DataTypes.STRING,
+    validate: {
+      len: [10, 15],
+    },
+  },
 }, {
-  tableName: 'users',
   sequelize,
+  tableName: 'users',
+});
+
+User.belongsTo(UserType, {
+  foreignKey: 'user_type_id',
 });
 
 export { User };

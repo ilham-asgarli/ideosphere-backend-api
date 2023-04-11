@@ -1,7 +1,4 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { v4 as uuid } from 'uuid';
 import { User } from '../db/models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
@@ -35,7 +32,6 @@ class UserController {
   }
 
   public static async register(req: Request, res: Response): Promise<void> {
-    const id: string = uuid();
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -43,10 +39,10 @@ class UserController {
       return;
     }
 
-    const hashedPassword = generatePasswordHash(password);
+    const hashedPassword = await generatePasswordHash(password);
 
     try {
-      const user = await User.create({ id, email, password: hashedPassword });
+      const user = await User.create({ email, password: hashedPassword });
       const token = generateJwtToken({ userId: user.id });
       res.json({ token });
     } catch (err) {
@@ -66,7 +62,7 @@ class UserController {
     }
 
     try {
-      const decoded = verifyJwtToken(token)  as { userId: string };
+      const decoded = await verifyJwtToken(token)  as { userId: string };
       const user = await User.findByPk(decoded.userId);
 
       if (!user) {
@@ -74,7 +70,7 @@ class UserController {
         return;
       }
 
-      const passwordHash = generatePasswordHash(password);
+      const passwordHash = await generatePasswordHash(password);
 
       await user.update({ password: passwordHash });
       res.json({ message: 'Password reset successfully.' });
