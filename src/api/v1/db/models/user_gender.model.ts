@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
 
-class UserType extends Model {
+class UserGender extends Model {
     public id!: number;
     public name!: string;
 
@@ -9,7 +9,7 @@ class UserType extends Model {
     public readonly updated_at!: Date;
 }
 
-UserType.init({
+UserGender.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -21,7 +21,7 @@ UserType.init({
     },
 }, {
     sequelize,
-    tableName: 'user_types',
+    tableName: 'user_genders',
 });
 
-export { UserType };
+export { UserGender };

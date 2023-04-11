@@ -1,18 +1,19 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
 import { User } from './user.model';
+import { Chat } from './chat.model';
 
-class Company extends Model {
+class ChatMessage extends Model {
     public id!: string;
     public user_id!: string;
-    public name!: string;
-    public description!: string;
+    public chat_id!: string;
+    public message!: string;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;
 }
 
-Company.init({
+ChatMessage.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -26,15 +27,29 @@ Company.init({
             key: 'id',
         },
     },
-    name: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    chat_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: Chat,
+            key: 'id',
+        },
+    },
+    message: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    }
 }, {
     sequelize,
-    tableName: 'companies',
+    tableName: 'chat_messages',
 });
 
-Company.belongsTo(User, {
+ChatMessage.belongsTo(User, {
     foreignKey: 'user_id',
 });
 
-export { Company };
+ChatMessage.belongsTo(Chat, {
+    foreignKey: 'chat_id',
+});
+
+export { ChatMessage };

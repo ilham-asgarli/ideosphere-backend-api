@@ -21,6 +21,7 @@ User.init({
   },
   user_type_id: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     references: {
       model: UserType,
       key: 'id',

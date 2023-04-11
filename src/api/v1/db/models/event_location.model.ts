@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
+import { Event } from './event.model';
 
 class EventLocation extends Model {
     public id!: string;
@@ -16,12 +17,23 @@ EventLocation.init({
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    event_id: DataTypes.STRING,
+    event_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: Event,
+            key: 'id',
+        },
+    },
     latitude: DataTypes.DOUBLE,
     longitude: DataTypes.DOUBLE,
 }, {
     sequelize,
     tableName: 'event_locations',
+});
+
+EventLocation.belongsTo(Event, {
+    foreignKey: 'event_id',
 });
 
 export { EventLocation };

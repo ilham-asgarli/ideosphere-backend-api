@@ -1,18 +1,18 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
 import { User } from './user.model';
+import { Event } from './event.model';
 
-class Company extends Model {
+class EventParticipant extends Model {
     public id!: string;
     public user_id!: string;
-    public name!: string;
-    public description!: string;
+    public event_id!: string;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;
 }
 
-Company.init({
+EventParticipant.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -26,15 +26,25 @@ Company.init({
             key: 'id',
         },
     },
-    name: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    event_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: Event,
+            key: 'id',
+        },
+    },
 }, {
     sequelize,
-    tableName: 'companies',
+    tableName: 'event_participants',
 });
 
-Company.belongsTo(User, {
+EventParticipant.belongsTo(User, {
     foreignKey: 'user_id',
 });
 
-export { Company };
+EventParticipant.belongsTo(Event, {
+    foreignKey: 'event_id',
+});
+
+export { EventParticipant };

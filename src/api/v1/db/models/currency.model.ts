@@ -1,15 +1,18 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config';
+import { User } from './user.model';
 
-class UserType extends Model {
-    public id!: number;
+class Currency extends Model {
+    public id!: string;
+    public user_id!: string;
     public name!: string;
+    public description!: string;
 
     public readonly created_at!: Date;
     public readonly updated_at!: Date;
 }
 
-UserType.init({
+Currency.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -17,11 +20,11 @@ UserType.init({
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
+    iso_code: DataTypes.STRING,
 }, {
     sequelize,
-    tableName: 'user_types',
+    tableName: 'currencies',
 });
 
-export { UserType };
+export { Currency };
