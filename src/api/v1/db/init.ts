@@ -4,19 +4,19 @@ const isDev: boolean = process.env.NODE_ENV === 'development'
 const alter: boolean = isDev
 
 const dbInit = async () => {
-        await Currency.sync({ alter: alter });
-        await UserGender.sync({ alter: alter });
-        await UserType.sync({ alter: alter });
-        await User.sync({ alter: alter });
-        await Company.sync({ alter: alter });
-        await Customer.sync({ alter: alter });
-        await Chat.sync({ alter: alter });
-        await ChatMessage.sync({ alter: alter });
-        await ChatUser.sync({ alter: alter });
-        await EventGender.sync({ alter: alter });
-        await Event.sync({ alter: alter });
-        await EventLocation.sync({ alter: alter });
-        await EventParticipant.sync({ alter: alter });
+        await Currency.sync({ alter });
+        await UserGender.sync({ alter });
+        await UserType.sync({ alter });
+        await User.sync({ alter });
+        await Company.sync({ alter });
+        await Customer.sync({ alter });
+        await Chat.sync({ alter });
+        await ChatMessage.sync({ alter });
+        await ChatUser.sync({ alter });
+        await EventGender.sync({ alter });
+        await Event.sync({ alter });
+        await EventLocation.sync({ alter });
+        await EventParticipant.sync({ alter });
 }
 
 export default dbInit

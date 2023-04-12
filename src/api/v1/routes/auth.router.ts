@@ -9,6 +9,4 @@ router.post('/login', AuthController.login);
 router.post('/reset-password', AuthController.resetPassword);
 //router.post('/forgot-password', AuthController.forgotPassword);
 
-module.exports = router;
-
 export default router;
