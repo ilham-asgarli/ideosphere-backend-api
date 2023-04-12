@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { User } from '../../db/models';
-import { generatePasswordHash, verifyPasswordHash } from '../../helpers/hash.helper';
-import { generateJwtToken, verifyJwtToken } from '../../helpers/jwt.helper';
+import { User } from '../db/models';
+import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
+import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
 
 class AuthController {
-  public static async login(req: Request, res: Response): Promise<void> {
+  public async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -31,7 +31,7 @@ class AuthController {
     res.json({ token });
   }
 
-  public static async register(req: Request, res: Response): Promise<void> {
+  public async register(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -51,7 +51,7 @@ class AuthController {
     }
   }
 
-  public static async resetPassword(req: Request, res: Response): Promise<void> {
+  public async resetPassword(req: Request, res: Response): Promise<void> {
     const { password } = req.body;
     const token = (req.headers.authorization ?? '').split(' ')[1];
     console.log(token)

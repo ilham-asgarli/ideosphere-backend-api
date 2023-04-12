@@ -7,7 +7,6 @@ import xss from 'xss-clean'
 import loaders from './api/v1/loaders'
 import routes from './api/v1/routes'
 import rateLimiter from 'express-rate-limit'
-import { notFoundMiddleware } from './api/v1/middlewares/errors/not_found.middleware'
 import { errorHandlerMiddleware } from './api/v1/middlewares/errors/error_handler.middleware'
 
 loaders()
@@ -32,7 +31,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', routes);
 
-app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const PORT: Number = Number(process.env.PORT) || 3000;
