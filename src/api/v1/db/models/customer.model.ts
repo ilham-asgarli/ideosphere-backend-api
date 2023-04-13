@@ -23,7 +23,12 @@ Customer.init({
     },
     firstname: DataTypes.STRING,
     lastname: DataTypes.STRING,
-    biography: DataTypes.TEXT,
+    biography: {
+        type: DataTypes.TEXT,
+        validate: {
+            len: [0, 300]
+        }
+    },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE
 }, {

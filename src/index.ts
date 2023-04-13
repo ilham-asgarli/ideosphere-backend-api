@@ -30,7 +30,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', routes);
-
 app.use(errorHandlerMiddleware);
 
 const PORT: Number = Number(process.env.PORT) || 3000;

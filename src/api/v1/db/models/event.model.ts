@@ -30,7 +30,12 @@ Event.init({
         primaryKey: true,
     },
     name: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    description: {
+        type: DataTypes.TEXT,
+        validate: {
+            len: [0, 3000]
+        }
+    },
     address: DataTypes.STRING,
     start_time: {
         type: DataTypes.DATE,

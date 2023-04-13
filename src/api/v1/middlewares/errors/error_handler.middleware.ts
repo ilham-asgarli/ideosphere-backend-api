@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
-import CustomAPIError from '../../errors/custom-api';
+import CustomAPIError from '../../errors/custom_api.error';
 
 export const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   let customError = {
