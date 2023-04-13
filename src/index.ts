@@ -8,6 +8,7 @@ import loaders from './api/v1/loaders'
 import routes from './api/v1/routes'
 import rateLimiter from 'express-rate-limit'
 import { errorHandlerMiddleware } from './api/v1/middlewares/errors/error_handler.middleware'
+import NotFoundError from './api/v1/errors/not_found.error'
 
 loaders()
 
@@ -30,6 +31,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', routes);
+app.use('*', () => {
+    throw new NotFoundError();
+});
 app.use(errorHandlerMiddleware);
 
 const PORT: Number = Number(process.env.PORT) || 3000;
