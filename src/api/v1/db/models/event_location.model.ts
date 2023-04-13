@@ -1,15 +1,15 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
 import { Event } from './event.model';
 
-class EventLocation extends Model {
-    public id!: string;
-    public event_id!: string;
-    public latitude!: number;
-    public longitude!: number;
+class EventLocation extends Model<InferAttributes<EventLocation>, InferCreationAttributes<EventLocation>> {
+    declare id: CreationOptional<string>;
+    declare event_id: ForeignKey<Event['id']>;
+    declare latitude: number;
+    declare longitude: number;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: Date;
+    declare updated_at: Date;
 }
 
 EventLocation.init({
@@ -33,13 +33,19 @@ EventLocation.init({
         type: DataTypes.DOUBLE,
         allowNull: false,
     },
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'event_locations',
 });
 
-EventLocation.belongsTo(Event, {
-    foreignKey: 'event_id',
+EventLocation.belongsTo(Event);
+Event.hasOne(EventLocation, {
+    foreignKey: {
+        name: 'event_id',
+        allowNull: false,
+    }
 });
 
 export { EventLocation };

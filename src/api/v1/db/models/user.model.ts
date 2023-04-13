@@ -1,16 +1,15 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
 import { UserType } from './user_type.model';
 
-class User extends Model {
-  public id!: string;
-  public user_type_id!: number;
-  public email!: string;
-  public password!: string;
-  public phone_number?: string;
-
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare id: CreationOptional<string>;
+  declare user_type_id: ForeignKey<UserType['id']>;
+  declare email: string;
+  declare password: string;
+  declare phone_number: string | null;
+  declare created_at: CreationOptional<Date>;
+  declare updated_at: CreationOptional<Date>;
 }
 
 User.init({
@@ -18,14 +17,6 @@ User.init({
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-  },
-  user_type_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: UserType,
-      key: 'id',
-    },
   },
   email: {
     type: DataTypes.STRING,
@@ -45,13 +36,19 @@ User.init({
       len: [10, 15],
     },
   },
+  created_at: DataTypes.DATE,
+  updated_at: DataTypes.DATE
 }, {
   sequelize,
   tableName: 'users',
 });
 
-User.belongsTo(UserType, {
-  foreignKey: 'user_type_id',
+User.belongsTo(UserType);
+UserType.hasMany(User, {
+  foreignKey: {
+    name: 'user_type_id',
+    allowNull: false,
+  }
 });
 
 export { User };

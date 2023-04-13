@@ -1,13 +1,13 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import { sequelize } from '../config';
 
-class Currency extends Model {
-    public id!: number;
-    public name!: string;
-    public iso_code!: string;
+class Currency extends Model<InferAttributes<Currency>, InferCreationAttributes<Currency>> {
+    declare id: CreationOptional<number>;
+    declare name: string;
+    declare iso_code: string;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 Currency.init({
@@ -24,6 +24,8 @@ Currency.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'currencies',

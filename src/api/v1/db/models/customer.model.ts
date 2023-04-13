@@ -1,18 +1,18 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
 import { User } from './user.model';
 import { UserGender } from './user_gender.model';
 
-class Customer extends Model {
-    public id!: string;
-    public user_id!: string;
-    public gender_id!: number;
-    public firstname?: string;
-    public lastname?: string;
-    public biography?: string;
+class Customer extends Model<InferAttributes<Customer>, InferCreationAttributes<Customer>> {
+    declare id: CreationOptional<string>;
+    declare user_id: ForeignKey<User['id']>;
+    declare gender_id: ForeignKey<UserGender['id']>;
+    declare firstname: string | null;
+    declare lastname: string | null;
+    declare biography: string | null;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 Customer.init({
@@ -21,25 +21,11 @@ Customer.init({
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    user_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: User,
-            key: 'id',
-        },
-    },
-    gender_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: UserGender,
-            key: 'id',
-        },
-    },
     firstname: DataTypes.STRING,
     lastname: DataTypes.STRING,
     biography: DataTypes.TEXT,
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'customers',
@@ -48,9 +34,19 @@ Customer.init({
 Customer.belongsTo(User, {
     foreignKey: 'user_id',
 });
+User.hasOne(Customer, {
+    foreignKey: {
+        name: 'user_id',
+        allowNull: false,
+    }
+});
 
-Customer.belongsTo(UserGender, {
-    foreignKey: 'gender_id',
+Customer.belongsTo(UserGender);
+UserGender.hasOne(Customer, {
+    foreignKey: {
+        name: 'gender_id',
+        allowNull: false,
+    }
 });
 
 export { Customer };

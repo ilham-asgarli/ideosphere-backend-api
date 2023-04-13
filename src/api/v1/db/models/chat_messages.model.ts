@@ -1,16 +1,16 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
 import { User } from './user.model';
 import { Chat } from './chat.model';
 
-class ChatMessage extends Model {
-    public id!: string;
-    public user_id!: string;
-    public chat_id!: string;
-    public message!: string;
+class ChatMessage extends Model<InferAttributes<ChatMessage>, InferCreationAttributes<ChatMessage>> {
+    declare id: string;
+    declare user_id: ForeignKey<User['id']>;
+    declare chat_id: ForeignKey<Chat['id']>;
+    declare message: string;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: Date;
+    declare updated_at: Date;
 }
 
 ChatMessage.init({
@@ -19,37 +19,31 @@ ChatMessage.init({
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    user_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: User,
-            key: 'id',
-        },
-    },
-    chat_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: Chat,
-            key: 'id',
-        },
-    },
     message: {
         type: DataTypes.TEXT,
         allowNull: false,
-    }
+    },
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'chat_messages',
 });
 
-ChatMessage.belongsTo(User, {
-    foreignKey: 'user_id',
-});
+ChatMessage.belongsTo(User);
+User.hasMany(ChatMessage, {
+    foreignKey: {
+      name: 'user_id',
+      allowNull: false,
+    }
+  });
 
-ChatMessage.belongsTo(Chat, {
-    foreignKey: 'chat_id',
-});
+ChatMessage.belongsTo(Chat);
+Chat.hasMany(ChatMessage, {
+    foreignKey: {
+      name: 'chat_id',
+      allowNull: false,
+    },
+  });
 
 export { ChatMessage };

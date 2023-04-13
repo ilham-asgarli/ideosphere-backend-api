@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User } from '../db/models';
+import { Chat, ChatMessage, User } from '../db/models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
 
@@ -30,7 +30,7 @@ class AuthController {
 
     res.json({ token });
   }
-
+  
   public async register(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
@@ -42,7 +42,9 @@ class AuthController {
     const hashedPassword = await generatePasswordHash(password);
 
     try {
-      const user = await User.create({ email, password: hashedPassword });
+      // TODO: user_type_id must come from request
+      const user = await User.create({ email, password: hashedPassword, user_type_id: 1});
+
       const token = generateJwtToken({ userId: user.id });
       res.json({ token });
     } catch (err) {

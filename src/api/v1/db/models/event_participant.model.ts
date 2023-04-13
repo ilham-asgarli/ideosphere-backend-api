@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
 import { User } from './user.model';
 import { Event } from './event.model';
@@ -34,6 +34,8 @@ EventParticipant.init({
             key: 'id',
         },
     },
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'event_participants',

@@ -1,17 +1,17 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import { sequelize } from '../config';
 
-class UserType extends Model {
-    public id!: number;
-    public name!: string;
+class UserType extends Model<InferAttributes<UserType>, InferCreationAttributes<UserType>> {
+    declare id: CreationOptional<number>;
+    declare name: string;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: Date;
+    declare updated_at: Date;
 }
 
 UserType.init({
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
     },
@@ -19,6 +19,8 @@ UserType.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'user_types',

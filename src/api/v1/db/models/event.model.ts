@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
 import { sequelize } from '../config';
 import { User } from './user.model';
 import { EventGender } from './event_gender.model';
@@ -62,6 +62,8 @@ Event.init({
     min_age: DataTypes.INTEGER,
     entry_fee: DataTypes.DOUBLE,
     participant_capacity: DataTypes.INTEGER,
+    created_at: DataTypes.DATE,
+    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'events',
