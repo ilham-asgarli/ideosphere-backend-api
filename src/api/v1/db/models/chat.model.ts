@@ -1,11 +1,11 @@
-import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import { sequelize } from '../config';
 
-class Chat extends Model {
-  public id!: CreationOptional<string>;
+class Chat extends Model<InferAttributes<Chat>, InferCreationAttributes<Chat>> {
+  declare id: CreationOptional<string>;
 
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  declare created_at: CreationOptional<Date>;
+  declare updated_at: CreationOptional<Date>;
 }
 
 Chat.init({

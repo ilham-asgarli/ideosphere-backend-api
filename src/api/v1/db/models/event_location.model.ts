@@ -8,8 +8,8 @@ class EventLocation extends Model<InferAttributes<EventLocation>, InferCreationA
     declare latitude: number;
     declare longitude: number;
 
-    declare created_at: Date;
-    declare updated_at: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 EventLocation.init({
@@ -17,21 +17,21 @@ EventLocation.init({
         type: DataTypes.STRING,
         primaryKey: true,
     },
-    event_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: Event,
-            key: 'id',
-        },
-    },
     latitude: {
         type: DataTypes.DOUBLE,
         allowNull: false,
+        validate: {
+            min: -90,
+            max: 90
+        }
     },
     longitude: {
         type: DataTypes.DOUBLE,
         allowNull: false,
+        validate: {
+            min: -180,
+            max: 180
+        }
     },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE

@@ -4,23 +4,23 @@ import { User } from './user.model';
 import { EventGender } from './event_gender.model';
 import { Chat } from './chat.model';
 
-class Event extends Model {
-    public id!: string;
-    public gender_id!: number;
-    public organizer_id!: string;
-    public chat_id!: string;
-    public name?: string;
-    public description?: string;
-    public address?: string;
-    public start_time?: Date;
-    public end_time?: Date;
-    public max_age?: number;
-    public min_age?: number;
-    public entry_fee?: number;
-    public participant_capacity?: number;
+class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
+    declare id: CreationOptional<string>;
+    declare gender_id: ForeignKey<EventGender['id']>;
+    declare organizer_id: ForeignKey<User['id']>;
+    declare chat_id: ForeignKey<Chat['id']>;
+    declare name: string | null;
+    declare description: string | null;
+    declare address: string | null;
+    declare start_time: Date | null;
+    declare end_time: Date | null;
+    declare max_age: number | null;
+    declare min_age: number | null;
+    declare entry_fee: number | null;
+    declare participant_capacity: number | null;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 Event.init({
@@ -29,39 +29,38 @@ Event.init({
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    gender_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: EventGender,
-            key: 'id',
-        },
-    },
-    organizer_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: User,
-            key: 'id',
-        },
-    },
-    chat_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: Chat,
-            key: 'id',
-        },
-    },
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     address: DataTypes.STRING,
-    start_time: DataTypes.DATE,
-    end_time: DataTypes.DATE,
-    max_age: DataTypes.INTEGER,
-    min_age: DataTypes.INTEGER,
-    entry_fee: DataTypes.DOUBLE,
-    participant_capacity: DataTypes.INTEGER,
+    start_time: {
+        type: DataTypes.DATE,
+        validate: {
+            isAfterNow(value: Date): void {
+                if (value <= new Date()) {
+                    throw new Error('Start time must be after the current date.');
+                }
+            },
+        },
+    },
+    end_time: {
+        type: DataTypes.DATE,
+        validate: {
+            isAfterStart(value: Date): void {
+                if (value <= (this.start_time as Date)) {
+                    throw new Error('End time must be after the start time.');
+                }
+            },
+        },
+    },
+    max_age: DataTypes.INTEGER.UNSIGNED,
+    min_age: DataTypes.INTEGER.UNSIGNED,
+    entry_fee: DataTypes.DOUBLE.UNSIGNED,
+    participant_capacity: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        validate: {
+            min: 1,
+        }
+    },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE
 }, {
@@ -70,15 +69,37 @@ Event.init({
 });
 
 Event.belongsTo(EventGender, {
-    foreignKey: 'gender_id',
+    foreignKey: {
+        name: 'gender_id',
+        allowNull: false,
+    }
+});
+EventGender.hasMany(Event, {
+    foreignKey: {
+        name: 'gender_id',
+        allowNull: false,
+    }
 });
 
 Event.belongsTo(User, {
-    foreignKey: 'organizer_id',
+    foreignKey: {
+        name: 'organizer_id',
+        allowNull: false,
+    }
+});
+User.hasMany(Event, {
+    foreignKey: {
+        name: 'organizer_id',
+        allowNull: false,
+    }
 });
 
-Event.belongsTo(Chat, {
-    foreignKey: 'chat_id',
+Event.belongsTo(Chat);
+Chat.hasMany(Event, {
+    foreignKey: {
+        name: 'chat_id',
+        allowNull: false,
+    }
 });
 
 export { Event };

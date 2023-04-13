@@ -3,13 +3,13 @@ import { sequelize } from '../config';
 import { User } from './user.model';
 import { Event } from './event.model';
 
-class EventParticipant extends Model {
-    public id!: string;
-    public user_id!: string;
-    public event_id!: string;
+class EventParticipant extends Model<InferAttributes<EventParticipant>, InferCreationAttributes<EventParticipant>> {
+    declare id: CreationOptional<string>;
+    declare user_id: ForeignKey<User['id']>;
+    declare event_id: ForeignKey<Event['id']>;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 EventParticipant.init({
@@ -18,22 +18,6 @@ EventParticipant.init({
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
-    user_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: User,
-            key: 'id',
-        },
-    },
-    event_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-            model: Event,
-            key: 'id',
-        },
-    },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE
 }, {
@@ -41,12 +25,20 @@ EventParticipant.init({
     tableName: 'event_participants',
 });
 
-EventParticipant.belongsTo(User, {
-    foreignKey: 'user_id',
+EventParticipant.belongsTo(User);
+User.hasMany(EventParticipant, {
+    foreignKey: {
+        name: 'user_id',
+        allowNull: false,
+    }
 });
 
-EventParticipant.belongsTo(Event, {
-    foreignKey: 'event_id',
+EventParticipant.belongsTo(Event);
+Event.hasMany(EventParticipant, {
+    foreignKey: {
+        name: 'event_id',
+        allowNull: false,
+    }
 });
 
 export { EventParticipant };

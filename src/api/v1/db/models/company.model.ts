@@ -7,7 +7,7 @@ class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Co
     declare user_id: ForeignKey<User['id']>;
     declare name: string | null;
     declare description: string | null;
-
+    
     declare created_at: CreationOptional<Date>;
     declare updated_at: CreationOptional<Date>;
 }

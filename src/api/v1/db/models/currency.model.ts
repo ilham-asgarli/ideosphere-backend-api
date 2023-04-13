@@ -12,7 +12,7 @@ class Currency extends Model<InferAttributes<Currency>, InferCreationAttributes<
 
 Currency.init({
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
     },

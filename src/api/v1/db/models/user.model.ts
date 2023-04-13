@@ -29,11 +29,14 @@ User.init({
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      len: [6, 50],
+    }
   },
   phone_number: {
     type: DataTypes.STRING,
     validate: {
-      len: [10, 15],
+      len: [1, 25],
     },
   },
   created_at: DataTypes.DATE,

@@ -1,17 +1,17 @@
-import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import { sequelize } from '../config';
 
-class UserGender extends Model {
-    public id!: number;
-    public name!: string;
+class UserGender extends Model<InferAttributes<UserGender>, InferCreationAttributes<UserGender>> {
+    declare id: CreationOptional<number>;
+    declare name: string;
 
-    public readonly created_at!: Date;
-    public readonly updated_at!: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 UserGender.init({
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
     },

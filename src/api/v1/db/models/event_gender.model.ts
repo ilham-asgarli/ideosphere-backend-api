@@ -5,8 +5,8 @@ class EventGender extends Model<InferAttributes<EventGender>, InferCreationAttri
     declare id: CreationOptional<number>;
     declare name: string;
 
-    declare created_at: Date;
-    declare updated_at: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 EventGender.init({
