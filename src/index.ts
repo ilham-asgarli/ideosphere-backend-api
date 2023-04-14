@@ -1,18 +1,18 @@
-import express, { Application } from 'express'
-import path from 'path'
-import cors from 'cors'
-import helmet from 'helmet'
-import morgan from 'morgan'
-import xss from 'xss-clean'
-import loaders from './api/v1/loaders'
-import routes from './api/v1/routes'
-import rateLimiter from 'express-rate-limit'
-import { errorHandlerMiddleware } from './api/v1/middlewares/errors/error_handler.middleware'
-import NotFoundError from './api/v1/errors/not_found.error'
+import express, { Application } from 'express';
+import path from 'path';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import xss from 'xss-clean';
+import loaders from './api/v1/loaders';
+import routes from './api/v1/routes';
+import rateLimiter from 'express-rate-limit';
+import { errorHandlerMiddleware } from './api/v1/middlewares/errors/error_handler.middleware';
+import NotFoundError from './api/v1/errors/not_found.error';
 
-loaders()
+loaders();
 
-const app: Application = express()
+const app: Application = express();
 
 app.use(
     rateLimiter({

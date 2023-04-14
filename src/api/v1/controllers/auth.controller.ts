@@ -1,86 +1,72 @@
-import { Request, Response } from 'express';
-import { Chat, ChatMessage, User } from '../db/models';
+import { NextFunction, Request, Response } from 'express';
+import { User } from '../db/models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
+import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
+import BadRequestError from '../errors/bad_request.error';
+import NotFoundError from '../errors/not_found.error';
 
 class AuthController {
-  public async login(req: Request, res: Response): Promise<void> {
+  public login = handleErrorAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).json({ message: 'Email and password are required.' });
-      return;
+      throw new BadRequestError('Email, and password are required.');
     }
 
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      res.status(401).json({ message: 'Invalid email or password.' });
-      return;
+      throw new BadRequestError('Invalid email or password.');
     }
 
     const isPasswordValid = await verifyPasswordHash(password, user.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({ message: 'Invalid email or password.' });
-      return;
+      throw new BadRequestError('Invalid email or password.');
     }
 
     const token = generateJwtToken({ userId: user.id });
 
     res.json({ token });
-  }
-  
-  public async register(req: Request, res: Response): Promise<void> {
+  });
+
+  public register = handleErrorAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).json({ message: 'Email, and password are required.' });
-      return;
+      throw new BadRequestError('Email, and password are required.');
     }
 
     const hashedPassword = await generatePasswordHash(password);
 
-    try {
-      // TODO: user_type_id must come from request
-      const user = await User.create({ email, password: hashedPassword, user_type_id: 1});
+    // TODO: user_type_id must come from request
+    const user = await User.create({ email, password: hashedPassword, user_type_id: 1 });
 
-      const token = generateJwtToken({ userId: user.id });
-      res.json({ token });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Something went wrong.' });
-    }
-  }
+    const token = generateJwtToken({ userId: user.id });
+    return res.json({ token });
+  });
 
-  public async resetPassword(req: Request, res: Response): Promise<void> {
+  public resetPassword = handleErrorAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { password } = req.body;
     const token = (req.headers.authorization ?? '').split(' ')[1];
-    console.log(token)
 
     if (!password || !token) {
-      res.status(400).json({ message: 'Password and token are required.' });
-      return;
+      throw new BadRequestError('Password and token are required.');
     }
 
-    try {
-      const decoded = await verifyJwtToken(token)  as { userId: string };
-      const user = await User.findByPk(decoded.userId);
+    const decoded = await verifyJwtToken(token) as { userId: string };
+    const user = await User.findByPk(decoded.userId);
 
-      if (!user) {
-        res.status(404).json({ message: 'User not found.' });
-        return;
-      }
-
-      const passwordHash = await generatePasswordHash(password);
-
-      await user.update({ password: passwordHash });
-      res.json({ message: 'Password reset successfully.' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Something went wrong.' });
+    if (!user) {
+      throw new NotFoundError('User not found.');
     }
-  }
+
+    const passwordHash = await generatePasswordHash(password);
+
+    await user.update({ password: passwordHash });
+    res.json({ message: 'Password reset successfully.' });
+  });
 }
 
 export { AuthController };

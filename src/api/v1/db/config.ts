@@ -1,4 +1,5 @@
 import { Dialect, Sequelize } from 'sequelize'
+import NotFoundError from '../errors/not_found.error'
 
 const dbName = process.env.DB_NAME as string
 const dbUser = process.env.DB_USER as string
@@ -12,6 +13,6 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   define: {
     underscored: true,
   },
-})
+});
 
 export { sequelize }

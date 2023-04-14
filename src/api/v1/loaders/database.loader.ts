@@ -1,4 +1,4 @@
-import dbInit from "../db/init"
+import { dbInit } from "../db/init"
 
 async function main() {
     dbInit()
