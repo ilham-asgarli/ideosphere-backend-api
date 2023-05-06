@@ -3,20 +3,19 @@ import { Chat, ChatMessage, ChatUser, Company, Currency, Customer, Event, EventG
 const isDevelopment: boolean = process.env.NODE_ENV === 'development';
 const alter: boolean = false; // isDevelopment
 
-export function dbInit(): void {
-    Promise.all([
-        Currency.sync({ alter }),
-        UserGender.sync({ alter }),
-        UserType.sync({ alter }),
-        User.sync({ alter }),
-        Company.sync({ alter }),
-        Customer.sync({ alter }),
-        Chat.sync({ alter }),
-        ChatMessage.sync({ alter }),
-        ChatUser.sync({ alter }),
-        EventGender.sync({ alter }),
-        Event.sync({ alter }),
-        EventLocation.sync({ alter }),
-        EventParticipant.sync({ alter }),
-    ]);
+export async function dbInit(): Promise<void> {
+    await Currency.sync({ alter });
+    await UserGender.sync({ alter });
+    await UserType.sync({ alter });
+    await User.sync({ alter });
+    await Company.sync({ alter });
+    await Customer.sync({ alter });
+    await Customer.sync({ alter });
+    await Chat.sync({ alter });
+    await ChatMessage.sync({ alter });
+    await ChatUser.sync({ alter });
+    await EventGender.sync({ alter });
+    await Event.sync({ alter });
+    await EventLocation.sync({ alter });
+    await EventParticipant.sync({ alter });
 }
