@@ -1,6 +1,7 @@
 FROM node:20
-WORKDIR /home/node/ideosphere
-COPY ideosphere /home/node/ideosphere
+WORKDIR /usr/src/ideosphere
+COPY package*.json ./
 RUN npm install
-CMD npm run start
+COPY . .
 EXPOSE 3000
+CMD npm run start
