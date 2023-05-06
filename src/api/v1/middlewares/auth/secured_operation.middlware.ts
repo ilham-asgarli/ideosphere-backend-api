@@ -1,4 +1,4 @@
-const { getUserInfoFromToken } = require("../../core/auth/jwtHelper")
+/*const { getUserInfoFromToken } = require("../../core/auth/jwtHelper")
 const SystemError = require("../../core/models/errors/SystemError")
 const errorMessages = require("../../lib/messages/errorMessages")
 
@@ -18,4 +18,4 @@ const securedOperation = (requiredRoles) => {
     }
 }
 
-module.exports = securedOperation
+module.exports = securedOperation*/
