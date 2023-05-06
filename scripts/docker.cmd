@@ -1,6 +1,6 @@
 set /p "name=Image name: "
 if not [%name%]==[] (
-docker build --t %name% .
+docker build -t %name% .
 )
 
 set /p "port1=Port 1: "

@@ -1,4 +1,4 @@
-# FROM node:20
+FROM node:20
 WORKDIR /home/node/ideosphere
 COPY ideosphere /home/node/ideosphere
 RUN npm install
