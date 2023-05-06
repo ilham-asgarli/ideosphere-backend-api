@@ -1,7 +1,7 @@
 import { dbInit } from "../db/init"
 
 async function main() {
-    dbInit()
+    await dbInit()
 }
 
 export default main
