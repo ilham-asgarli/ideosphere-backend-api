@@ -1,11 +1,10 @@
-import express, { Application } from 'express';
-import http from 'http';
+import express from 'express';
+import expressWs from 'express-ws';
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import xss from 'xss-clean';
-import { Server } from 'socket.io';
 import loaders from './api/v1/loaders';
 import routes from './api/v1/routes';
 import rateLimiter from 'express-rate-limit';
@@ -14,9 +13,7 @@ import NotFoundError from './api/v1/errors/not_found.error';
 
 loaders();
 
-const app: Application = express();
-const server = http.createServer(app);
-const io = new Server(server);
+const app = expressWs(express()).app;
 
 app.use(
     rateLimiter({
@@ -41,6 +38,6 @@ app.use('*', () => {
 app.use(errorHandlerMiddleware);
 
 const PORT: Number = Number(process.env.PORT) || 3000;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 });
