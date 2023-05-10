@@ -12,8 +12,8 @@ export async function dbInit(): Promise<void> {
     await Customer.sync({ alter });
     await Customer.sync({ alter });
     await Chat.sync({ alter });
-    await ChatMessage.sync({ alter });
     await ChatUser.sync({ alter });
+    await ChatMessage.sync({ alter });
     await EventGender.sync({ alter });
     await Event.sync({ alter });
     await EventLocation.sync({ alter });
