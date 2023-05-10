@@ -1,9 +1,9 @@
 import { IsDefined, IsDate, IsInt, Min } from "class-validator";
 
-class EventGenderDTO {
+export default class EventGenderDTO {
     @IsDefined()
-    @IsInt()
     @Min(0)
+    @IsInt()
     id?: number;
 
     @IsDefined()

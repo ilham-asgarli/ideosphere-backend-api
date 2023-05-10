@@ -1,21 +1,19 @@
-/*const { getUserInfoFromToken } = require("../../core/auth/jwtHelper")
-const SystemError = require("../../core/models/errors/SystemError")
-const errorMessages = require("../../lib/messages/errorMessages")
+import { NextFunction, Request, Response } from "express";
+import { UnauthenticatedError } from "../../errors";
+import { verifyJwtToken } from "../../helpers/jwt.helper";
 
-const securedOperation = (requiredRoles) => {
-    return (req, res, next) => {
-        const token = req.get('Authorization')
-        if (!token) return next(new SystemError(errorMessages.tokenMissing, 401))
+export const securedOperation = (requiredRoles: any) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const token = req.headers.authorization;
+        if (!token) return next(new UnauthenticatedError());
 
-        const userRoles = getUserInfoFromToken(token)?.roles
-        if (!userRoles) return next(new SystemError(errorMessages.authDenied, 401))
+        const userRoles = verifyJwtToken(token)?.roles
+        if (!userRoles) return next(new UnauthenticatedError());
 
         for (const userRole of userRoles) {
-            if (requiredRoles.includes(userRole)) return next()
+            if (requiredRoles.includes(userRole)) return next();
         }
 
-        return next(new SystemError(errorMessages.authDenied, 401))
+        return next(new UnauthenticatedError());
     }
 }
-
-module.exports = securedOperation*/

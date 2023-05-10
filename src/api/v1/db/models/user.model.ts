@@ -47,7 +47,7 @@ User.belongsTo(UserType);
 UserType.hasMany(User, {
   foreignKey: {
     name: 'user_type_id',
-    allowNull: false,
+    allowNull: true,
   }
 });
 

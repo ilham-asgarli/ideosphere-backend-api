@@ -1,26 +1,28 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { User } from '../db/models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
 import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
-import BadRequestError from '../errors/bad_request.error';
-import NotFoundError from '../errors/not_found.error';
+import { plainToInstance, instanceToPlain } from "class-transformer";
+import { BadRequestError, NotFoundError } from "../errors";
+import { LoginRequestDTO, RegisterRequestDTO } from '../dtos';
+import { SuccessResponse } from '../responses';
+import ResetPasswordRequestDTO from '../dtos/reset-password-request.dto';
+import { validateDTO } from '../helpers/validation.helper';
 
 class AuthController {
-  public login = handleErrorAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+  public login = handleErrorAsync(async (req: Request, res: Response) => {
+    const loginRequestDTO = plainToInstance(LoginRequestDTO, req.body);
 
-    if (!email || !password) {
-      throw new BadRequestError('Email, and password are required.');
-    }
+    validateDTO(loginRequestDTO);
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email: loginRequestDTO.email } });
 
     if (!user) {
       throw new BadRequestError('Invalid email or password.');
     }
 
-    const isPasswordValid = await verifyPasswordHash(password, user.password);
+    const isPasswordValid = await verifyPasswordHash(loginRequestDTO.password!, user.password);
 
     if (!isPasswordValid) {
       throw new BadRequestError('Invalid email or password.');
@@ -28,32 +30,29 @@ class AuthController {
 
     const token = generateJwtToken({ userId: user.id });
 
-    res.json({ token });
+    res.json(instanceToPlain(new SuccessResponse({data : {token: token} })));
   });
 
-  public register = handleErrorAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+  public register = handleErrorAsync(async (req: Request, res: Response) => {
+    const registerRequestDTO = plainToInstance(RegisterRequestDTO, req.body);
 
-    if (!email || !password) {
-      throw new BadRequestError('Email, and password are required.');
-    }
+    validateDTO(registerRequestDTO);
 
-    const hashedPassword = await generatePasswordHash(password);
+    const hashedPassword = await generatePasswordHash(registerRequestDTO.password!);
 
-    // TODO: user_type_id must come from request
-    const user = await User.create({ email, password: hashedPassword, user_type_id: 1 });
+    const user = await User.create({ email: registerRequestDTO.email!, password: hashedPassword });
 
     const token = generateJwtToken({ userId: user.id });
-    return res.json({ token });
+    return res.json(instanceToPlain(new SuccessResponse({data : {token: token} })));
   });
 
-  public resetPassword = handleErrorAsync(async (req: Request, res: Response, next: NextFunction) => {
+  public resetPassword = handleErrorAsync(async (req: Request, res: Response) => {
     const { password } = req.body;
     const token = (req.headers.authorization ?? '').split(' ')[1];
 
-    if (!password || !token) {
-      throw new BadRequestError('Password and token are required.');
-    }
+    const resetPasswordRequestDTO = plainToInstance(ResetPasswordRequestDTO, req.body);
+
+    validateDTO(resetPasswordRequestDTO);
 
     const decoded = await verifyJwtToken(token) as { userId: string };
     const user = await User.findByPk(decoded.userId);

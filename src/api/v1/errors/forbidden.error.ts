@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
-import CustomAPIError from './custom_api.error';
+import CustomError from './custom.error';
 
-class UnauthorizedError extends CustomAPIError {
+class UnauthorizedError extends CustomError {
   constructor(message: string = 'Forbidden') {
     super({message : message, statusCode: StatusCodes.FORBIDDEN});
   }

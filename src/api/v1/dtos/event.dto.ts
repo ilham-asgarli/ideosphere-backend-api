@@ -1,13 +1,13 @@
 import { IsDefined, IsDate, IsUUID, IsInt, Min, Length } from "class-validator";
 
-class EventDTO {
+export default class EventDTO {
     @IsDefined()
     @IsUUID()
     id?: string;
 
     @IsDefined()
-    @IsInt()
     @Min(0)
+    @IsInt()
     gender_id?: number;
 
     @IsDefined()
@@ -31,8 +31,8 @@ class EventDTO {
     @IsDate()
     end_time?: Date;
 
-    @IsInt()
     @Min(0)
+    @IsInt()
     max_age?: number;
 
     @IsInt()

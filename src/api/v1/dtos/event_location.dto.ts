@@ -1,6 +1,6 @@
 import { IsDefined, IsDate, IsUUID, IsLatitude, IsLongitude } from "class-validator";
 
-class EventLocationDTO {
+export default class EventLocationDTO {
     @IsDefined()
     @IsUUID()
     id?: string;

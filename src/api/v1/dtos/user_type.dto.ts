@@ -1,6 +1,6 @@
 import { IsDefined, IsDate, IsInt, Min } from "class-validator";
 
-class UserTypeDTO {
+export default class UserTypeDTO {
     @IsDefined()
     @IsInt()
     @Min(0)

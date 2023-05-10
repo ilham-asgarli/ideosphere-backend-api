@@ -1,6 +1,6 @@
 import { IsDefined, IsDate, IsUUID, IsNotEmpty } from "class-validator";
 
-class ChatUserDTO {
+export default class ChatUserDTO {
     @IsDefined()
     @IsUUID()
     id?: string;

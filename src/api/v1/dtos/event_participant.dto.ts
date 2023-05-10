@@ -1,17 +1,17 @@
 import { IsDefined, IsDate, IsUUID, IsNotEmpty } from "class-validator";
 
-export default class ChatMessageDTO {
+export default class EventParticipantDTO {
     @IsDefined()
     @IsUUID()
     id?: string;
 
     @IsDefined()
     @IsUUID()
-    chat_user_id?: string;
+    user_id?: string;
 
     @IsDefined()
-    @IsNotEmpty()
-    message?: string;
+    @IsUUID()
+    event_id?: string;
 
     @IsDefined()
     @IsDate()

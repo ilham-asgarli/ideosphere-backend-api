@@ -1,25 +1,18 @@
 import { IsDefined, IsEmail, IsDate, Min, IsUUID, IsInt, IsPhoneNumber, Length } from "class-validator";
 
-export default class UserDTO {
+export default class CompanyDTO {
     @IsDefined()
     @IsUUID()
     id?: string;
 
     @IsDefined()
-    @Min(0)
-    @IsInt()
-    user_type_id?: number;
+    @IsUUID()
+    user_id?: string;
 
-    @IsDefined()
-    @IsEmail()
-    email?: string;
+    name?: string;
 
-    @IsDefined()
-    @Length(6)
-    password?: string;
-
-    @IsPhoneNumber()
-    phone_number?: string;
+    @Length(0, 1000)
+    description?: string;
 
     @IsDefined()
     @IsDate()
