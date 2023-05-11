@@ -14,7 +14,7 @@ export class AuthController {
     const loginRequestDTO = plainToInstance(LoginRequestDTO, req.body);
     await validateDTO(loginRequestDTO);
 
-    const data = this.authService.login(loginRequestDTO);
+    const data = await this.authService.login(loginRequestDTO);
     res.json(instanceToPlain(new SuccessResponse({ data })));
   });
 
@@ -22,7 +22,7 @@ export class AuthController {
     const registerRequestDTO = plainToInstance(RegisterRequestDTO, req.body);
     await validateDTO(registerRequestDTO);
 
-    const data = this.authService.login(registerRequestDTO);
+    const data = await this.authService.register(registerRequestDTO);
     return res.status(201).json(instanceToPlain(new SuccessResponse({ data })));
   });
 
@@ -34,6 +34,8 @@ export class AuthController {
     resetPasswordRequestDTO.id = decoded.userId;
 
     await validateDTO(resetPasswordRequestDTO);
+
+    await this.authService.resetPassword(resetPasswordRequestDTO);
     
     res.status(204).end();
   });
