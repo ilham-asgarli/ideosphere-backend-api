@@ -10,7 +10,7 @@ export default class CustomerDTO {
     user_id?: string;
 
     @IsDefined()
-    @Min(0)
+    @Min(1)
     @IsInt()
     gender_id?: number;
 

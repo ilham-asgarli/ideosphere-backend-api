@@ -13,6 +13,7 @@ import UserGenderDTO from "./user_gender.dto";
 import UserTypeDTO from "./user_type.dto";
 import LoginRequestDTO from "./login-request.dto";
 import RegisterRequestDTO from "./register-request.dto";
+import ResetPasswordRequestDTO from "./reset-password-request.dto";
 
 export {
   UserDTO,
@@ -33,4 +34,5 @@ export {
 export {
   LoginRequestDTO,
   RegisterRequestDTO,
+  ResetPasswordRequestDTO,
 }

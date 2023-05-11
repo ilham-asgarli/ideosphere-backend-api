@@ -23,6 +23,7 @@ Currency.init({
     iso_code: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
     },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE

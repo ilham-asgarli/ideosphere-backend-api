@@ -3,7 +3,7 @@ import { IsDefined, IsDate, IsInt, Min } from "class-validator";
 export default class UserTypeDTO {
     @IsDefined()
     @IsInt()
-    @Min(0)
+    @Min(1)
     id?: number;
 
     @IsDefined()

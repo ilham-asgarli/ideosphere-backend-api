@@ -18,4 +18,7 @@ export async function dbInit(): Promise<void> {
     await Event.sync({ alter });
     await EventLocation.sync({ alter });
     await EventParticipant.sync({ alter });
+    
+    await UserType.create({name: "customer"});
+    await UserType.create({name: "company"});
 }

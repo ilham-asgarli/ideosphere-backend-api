@@ -5,16 +5,16 @@ import { generateJwtToken, verifyJwtToken } from '../helpers/jwt.helper';
 import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
 import { plainToInstance, instanceToPlain } from "class-transformer";
 import { BadRequestError, NotFoundError } from "../errors";
-import { LoginRequestDTO, RegisterRequestDTO } from '../dtos';
+import { LoginRequestDTO, RegisterRequestDTO, ResetPasswordRequestDTO, UserDTO } from '../dtos';
 import { SuccessResponse } from '../responses';
-import ResetPasswordRequestDTO from '../dtos/reset-password-request.dto';
 import { validateDTO } from '../helpers/validation.helper';
+import { toDTOJSON, toModelJSON } from '../helpers/dto_model_convert.helper';
 
 class AuthController {
   public login = handleErrorAsync(async (req: Request, res: Response) => {
     const loginRequestDTO = plainToInstance(LoginRequestDTO, req.body);
 
-    validateDTO(loginRequestDTO);
+    await validateDTO(loginRequestDTO);
 
     const user = await User.findOne({ where: { email: loginRequestDTO.email } });
 
@@ -30,20 +30,22 @@ class AuthController {
 
     const token = generateJwtToken({ userId: user.id });
 
-    res.json(instanceToPlain(new SuccessResponse({data : {token: token} })));
+    res.json(instanceToPlain(new SuccessResponse({ data: { token: token, user: toDTOJSON(UserDTO, user) } })));
   });
 
   public register = handleErrorAsync(async (req: Request, res: Response) => {
     const registerRequestDTO = plainToInstance(RegisterRequestDTO, req.body);
 
-    validateDTO(registerRequestDTO);
+    await validateDTO(registerRequestDTO);
 
     const hashedPassword = await generatePasswordHash(registerRequestDTO.password!);
 
-    const user = await User.create({ email: registerRequestDTO.email!, password: hashedPassword });
+    registerRequestDTO.password = hashedPassword;
+    /*const registerUser = plainToInstance(User, instanceToPlain(registerRequestDTO));*/
+    const user = await User.create(toModelJSON(User, registerRequestDTO));
 
     const token = generateJwtToken({ userId: user.id });
-    return res.json(instanceToPlain(new SuccessResponse({data : {token: token} })));
+    return res.status(201).json(instanceToPlain(new SuccessResponse({ data: { token: token } })));
   });
 
   public resetPassword = handleErrorAsync(async (req: Request, res: Response) => {
@@ -52,7 +54,7 @@ class AuthController {
 
     const resetPasswordRequestDTO = plainToInstance(ResetPasswordRequestDTO, req.body);
 
-    validateDTO(resetPasswordRequestDTO);
+    await validateDTO(resetPasswordRequestDTO);
 
     const decoded = await verifyJwtToken(token) as { userId: string };
     const user = await User.findByPk(decoded.userId);
@@ -64,7 +66,7 @@ class AuthController {
     const passwordHash = await generatePasswordHash(password);
 
     await user.update({ password: passwordHash });
-    res.json({ message: 'Password reset successfully.' });
+    res.status(204).end();
   });
 }
 

@@ -2,7 +2,7 @@ import { IsDefined, IsDate, IsInt, Min } from "class-validator";
 
 export default class EventGenderDTO {
     @IsDefined()
-    @Min(0)
+    @Min(1)
     @IsInt()
     id?: number;
 

@@ -8,6 +8,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare email: string;
   declare password: string;
   declare phone_number: string | null;
+  
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 }
@@ -47,7 +48,7 @@ User.belongsTo(UserType);
 UserType.hasMany(User, {
   foreignKey: {
     name: 'user_type_id',
-    allowNull: true,
+    allowNull: false,
   }
 });
 

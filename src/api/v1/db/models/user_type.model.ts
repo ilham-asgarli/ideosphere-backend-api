@@ -5,8 +5,8 @@ class UserType extends Model<InferAttributes<UserType>, InferCreationAttributes<
     declare id: CreationOptional<number>;
     declare name: string;
 
-    declare created_at: Date;
-    declare updated_at: Date;
+    declare created_at: CreationOptional<Date>;
+    declare updated_at: CreationOptional<Date>;
 }
 
 UserType.init({
@@ -18,6 +18,7 @@ UserType.init({
     name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
     },
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE

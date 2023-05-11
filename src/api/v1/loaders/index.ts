@@ -3,5 +3,5 @@ import database from './database.loader'
 
 export default async () => {
     // env()
-    await database()
+    await database();
 }

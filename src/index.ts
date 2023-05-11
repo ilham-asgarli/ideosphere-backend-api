@@ -11,8 +11,6 @@ import rateLimiter from 'express-rate-limit';
 import { errorHandlerMiddleware } from './api/v1/middlewares/errors/error_handler.middleware';
 import NotFoundError from './api/v1/errors/not_found.error';
 
-loaders();
-
 const app = expressWs(express()).app;
 
 /*app.use(
@@ -38,6 +36,12 @@ app.use('*', () => {
 app.use(errorHandlerMiddleware);
 
 const PORT: Number = Number(process.env.PORT) || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Listening on port ${PORT}`);
+
+    try {
+        await loaders();
+    } catch (e) {
+        //console.log(e);
+    }
 });
