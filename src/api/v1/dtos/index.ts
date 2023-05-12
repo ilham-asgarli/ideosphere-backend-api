@@ -8,12 +8,14 @@ import EventDTO from "./event.dto";
 import EventGenderDTO from "./event_gender.dto";
 import EventLocationDTO from "./event_location.dto";
 import EventParticipantDTO from "./event_participant.dto";
-import UserDTO from "./user.dto";
 import UserGenderDTO from "./user_gender.dto";
 import UserTypeDTO from "./user_type.dto";
-import LoginRequestDTO from "./login.request.dto";
-import RegisterRequestDTO from "./register.request.dto";
-import ResetPasswordRequestDTO from "./reset_password.request.dto";
+import LoginRequestDTO from "./request/login.request.dto";
+import RegisterRequestDTO from "./request/register.request.dto";
+import ResetPasswordRequestDTO from "./request/reset_password.request.dto";
+import LoginResponseDTO from "./response/login.response.dto";
+import RegisterResponseDTO from "./response/register.response.dto";
+import UserDTO from "./user.dto";
 
 export {
   UserDTO,
@@ -35,4 +37,9 @@ export {
   LoginRequestDTO,
   RegisterRequestDTO,
   ResetPasswordRequestDTO,
+}
+
+export {
+  LoginResponseDTO,
+  RegisterResponseDTO,
 }

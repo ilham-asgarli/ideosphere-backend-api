@@ -5,7 +5,7 @@ import { ErrorResponse, FailResponse } from '../../responses';
 import { CustomError, UnauthenticatedError, ValidationError } from '../../errors';
 
 export const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, next) => {
-  console.log(err.message);
+  console.log(err);
 
   if (err instanceof UnauthenticatedError) {
     return res.status(err.statusCode).json(instanceToPlain(new ErrorResponse({ message: err.message })));
