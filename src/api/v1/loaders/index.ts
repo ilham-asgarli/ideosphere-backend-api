@@ -1,7 +1,7 @@
 // import env from './env.loader'
-import database from './database.loader'
+import { dbInit } from "./database.loader";
 
 export default async () => {
     // env()
-    await database();
+    await dbInit();
 }

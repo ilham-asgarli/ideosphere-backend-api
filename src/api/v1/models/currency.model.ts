@@ -1,5 +1,5 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { sequelize } from '../config';
+import { sequelize } from '../config/database';
 
 class Currency extends Model<InferAttributes<Currency>, InferCreationAttributes<Currency>> {
     declare id: CreationOptional<number>;

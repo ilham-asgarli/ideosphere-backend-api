@@ -1,6 +1,6 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
-import { sequelize } from '../config';
 import { ChatUser } from './chat_user.model';
+import { sequelize } from '../config/database';
 
 class ChatMessage extends Model<InferAttributes<ChatMessage>, InferCreationAttributes<ChatMessage>> {
   declare id: CreationOptional<string>;

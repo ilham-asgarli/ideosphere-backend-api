@@ -1,5 +1,5 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
-import { sequelize } from '../config';
+import { sequelize } from '../config/database';
 import { User } from './user.model';
 
 class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Company>> {

@@ -1,4 +1,4 @@
-import { User } from '../db/models';
+import { User } from '../models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken } from '../helpers/jwt.helper';
 import { BadRequestError, NotFoundError } from "../errors";

@@ -1,7 +1,7 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { sequelize } from '../config';
+import { sequelize } from '../config/database';
 
-class UserType extends Model<InferAttributes<UserType>, InferCreationAttributes<UserType>> {
+class UserGender extends Model<InferAttributes<UserGender>, InferCreationAttributes<UserGender>> {
     declare id: CreationOptional<number>;
     declare name: string;
 
@@ -9,7 +9,7 @@ class UserType extends Model<InferAttributes<UserType>, InferCreationAttributes<
     declare updated_at: CreationOptional<Date>;
 }
 
-UserType.init({
+UserGender.init({
     id: {
         type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
@@ -24,7 +24,7 @@ UserType.init({
     updated_at: DataTypes.DATE
 }, {
     sequelize,
-    tableName: 'user_types',
+    tableName: 'user_genders',
 });
 
-export { UserType };
+export { UserGender };

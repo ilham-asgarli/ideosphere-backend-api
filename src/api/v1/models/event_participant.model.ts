@@ -1,18 +1,18 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
-import { sequelize } from '../config';
+import { sequelize } from '../config/database';
 import { User } from './user.model';
-import { Chat } from './chat.model';
+import { Event } from './event.model';
 
-class ChatUser extends Model<InferAttributes<ChatUser>, InferCreationAttributes<ChatUser>> {
+class EventParticipant extends Model<InferAttributes<EventParticipant>, InferCreationAttributes<EventParticipant>> {
     declare id: CreationOptional<string>;
     declare user_id: ForeignKey<User['id']>;
-    declare chat_id: ForeignKey<Chat['id']>;
+    declare event_id: ForeignKey<Event['id']>;
 
     declare created_at: CreationOptional<Date>;
     declare updated_at: CreationOptional<Date>;
 }
 
-ChatUser.init({
+EventParticipant.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -22,25 +22,23 @@ ChatUser.init({
     updated_at: DataTypes.DATE
 }, {
     sequelize,
-    tableName: 'chat_users',
+    tableName: 'event_participants',
 });
 
-ChatUser.belongsTo(User);
-User.hasMany(ChatUser, {
+EventParticipant.belongsTo(User);
+User.hasMany(EventParticipant, {
     foreignKey: {
         name: 'user_id',
         allowNull: false,
     }
 });
 
-ChatUser.belongsTo(Chat, {
-    foreignKey: 'chat_id',
-});
-Chat.hasMany(ChatUser, {
+EventParticipant.belongsTo(Event);
+Event.hasMany(EventParticipant, {
     foreignKey: {
-        name: 'chat_id',
+        name: 'event_id',
         allowNull: false,
     }
 });
 
-export { ChatUser };
+export { EventParticipant };
