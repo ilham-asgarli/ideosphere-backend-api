@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { verifyJwtToken } from '../helpers/jwt.helper';
 import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
 import { plainToInstance, instanceToPlain } from "class-transformer";
-import { LoginRequestDTO, RegisterRequestDTO, ResetPasswordRequestDTO } from '../dtos';
 import { SuccessResponse } from '../responses';
 import { validateDTO } from '../helpers/validation.helper';
 import { AuthService } from '../services/auth.service';
+import { LoginRequestDTO, RegisterRequestDTO, ResetPasswordRequestDTO } from '../dtos/request';
 
 export class AuthController {
   authService = new AuthService();

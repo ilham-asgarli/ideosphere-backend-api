@@ -2,8 +2,10 @@ import { User } from '../db/models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken } from '../helpers/jwt.helper';
 import { BadRequestError, NotFoundError } from "../errors";
-import { LoginRequestDTO, LoginResponseDTO, RegisterRequestDTO, RegisterResponseDTO, ResetPasswordRequestDTO, UserDTO } from '../dtos';
 import { convertModeltoDTOJSON, convertDTOtoModelJSON } from '../helpers/dto_model_convert.helper';
+import { UserDTO } from '../dtos/model';
+import { LoginRequestDTO, RegisterRequestDTO, ResetPasswordRequestDTO } from '../dtos/request';
+import { LoginResponseDTO, RegisterResponseDTO } from '../dtos/response';
 
 export class AuthService {
     async login(loginRequestDTO: LoginRequestDTO): Promise<LoginResponseDTO> {
