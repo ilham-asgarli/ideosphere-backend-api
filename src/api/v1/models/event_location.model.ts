@@ -40,7 +40,12 @@ EventLocation.init({
     tableName: 'event_locations',
 });
 
-EventLocation.belongsTo(Event);
+EventLocation.belongsTo(Event, {
+    foreignKey: {
+        name: 'event_id',
+        allowNull: false,
+    }
+});
 Event.hasOne(EventLocation, {
     foreignKey: {
         name: 'event_id',

@@ -25,7 +25,12 @@ ChatUser.init({
     tableName: 'chat_users',
 });
 
-ChatUser.belongsTo(User);
+ChatUser.belongsTo(User, {
+    foreignKey: {
+        name: 'user_id',
+        allowNull: false,
+    }
+});
 User.hasMany(ChatUser, {
     foreignKey: {
         name: 'user_id',
@@ -34,7 +39,10 @@ User.hasMany(ChatUser, {
 });
 
 ChatUser.belongsTo(Chat, {
-    foreignKey: 'chat_id',
+    foreignKey: {
+        name: 'chat_id',
+        allowNull: false,
+    }
 });
 Chat.hasMany(ChatUser, {
     foreignKey: {

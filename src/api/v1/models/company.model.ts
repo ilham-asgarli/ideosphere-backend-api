@@ -32,7 +32,12 @@ Company.init({
     tableName: 'companies',
 });
 
-Company.belongsTo(User);
+Company.belongsTo(User, {
+    foreignKey: {
+        name: 'user_id',
+        allowNull: false,
+    }
+});
 User.hasOne(Company, {
     foreignKey: {
         name: 'user_id',

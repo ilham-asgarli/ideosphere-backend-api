@@ -25,7 +25,12 @@ EventParticipant.init({
     tableName: 'event_participants',
 });
 
-EventParticipant.belongsTo(User);
+EventParticipant.belongsTo(User, {
+    foreignKey: {
+        name: 'user_id',
+        allowNull: false,
+    }
+});
 User.hasMany(EventParticipant, {
     foreignKey: {
         name: 'user_id',
@@ -33,7 +38,12 @@ User.hasMany(EventParticipant, {
     }
 });
 
-EventParticipant.belongsTo(Event);
+EventParticipant.belongsTo(Event, {
+    foreignKey: {
+        name: 'event_id',
+        allowNull: false,
+    }
+});
 Event.hasMany(EventParticipant, {
     foreignKey: {
         name: 'event_id',

@@ -11,15 +11,13 @@ export class AuthService {
     async login(loginRequestDTO: LoginRequestDTO): Promise<LoginResponseDTO> {
         const user = await User.findOne({ where: { email: loginRequestDTO.email } });
 
-        if (!user) {
-            throw new BadRequestError('Invalid email or password.');
-        }
+        if (!user)
+        throw new BadRequestError('Invalid email or password.');
 
         const isPasswordValid = await verifyPasswordHash(loginRequestDTO.password!, user.password);
 
-        if (!isPasswordValid) {
-            throw new BadRequestError('Invalid email or password.');
-        }
+        if (!isPasswordValid)
+        throw new BadRequestError('Invalid email or password.');
 
         const token = generateJwtToken({ userId: user.id });
 
@@ -47,11 +45,18 @@ export class AuthService {
     async resetPassword(resetPasswordRequestDTO: ResetPasswordRequestDTO): Promise<void> {
         const user = await User.findByPk(resetPasswordRequestDTO.id);
 
-        if (!user) {
-            throw new NotFoundError('User not found.');
-        }
+        if (!user)
+        throw new NotFoundError('User not found.');
 
-        const passwordHash = await generatePasswordHash(resetPasswordRequestDTO.password!);
+        const isPasswordValid = await verifyPasswordHash(resetPasswordRequestDTO.oldPassword!, user.password);
+
+        if (!isPasswordValid)
+        throw new BadRequestError('Current password is wrong.');
+
+        if (resetPasswordRequestDTO.oldPassword! === resetPasswordRequestDTO.newPassword!)
+        throw new BadRequestError("New password can't be the same as old password");
+
+        const passwordHash = await generatePasswordHash(resetPasswordRequestDTO.newPassword!);
 
         await user.update({ password: passwordHash });
     }

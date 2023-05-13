@@ -44,7 +44,12 @@ User.init({
   tableName: 'users',
 });
 
-User.belongsTo(UserType);
+User.belongsTo(UserType, {
+  foreignKey: {
+    name: 'user_type_id',
+    allowNull: false,
+  }
+});
 UserType.hasMany(User, {
   foreignKey: {
     name: 'user_type_id',

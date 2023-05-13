@@ -37,7 +37,10 @@ Customer.init({
 });
 
 Customer.belongsTo(User, {
-    foreignKey: 'user_id',
+    foreignKey: {
+        name: 'user_id',
+        allowNull: false,
+    }
 });
 User.hasOne(Customer, {
     foreignKey: {
@@ -46,7 +49,12 @@ User.hasOne(Customer, {
     }
 });
 
-Customer.belongsTo(UserGender);
+Customer.belongsTo(UserGender, {
+    foreignKey: {
+        name: 'gender_id',
+        allowNull: false,
+    }
+});
 UserGender.hasOne(Customer, {
     foreignKey: {
         name: 'gender_id',

@@ -28,7 +28,12 @@ ChatMessage.init({
   tableName: 'chat_messages',
 });
 
-ChatMessage.belongsTo(ChatUser);
+ChatMessage.belongsTo(ChatUser, {
+  foreignKey: {
+    name: 'chat_user_id',
+    allowNull: false,
+  }
+});
 ChatUser.hasMany(ChatMessage, {
   foreignKey: {
     name: 'chat_user_id',

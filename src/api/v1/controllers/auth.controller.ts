@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { verifyJwtToken } from '../helpers/jwt.helper';
 import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
-import { plainToInstance, instanceToPlain } from "class-transformer";
+import { plainToInstance } from "class-transformer";
 import { SuccessResponse } from '../responses';
 import { validateDTO } from '../helpers/validation.helper';
 import { AuthService } from '../services/auth.service';
@@ -15,7 +15,7 @@ export class AuthController {
     await validateDTO(loginRequestDTO);
 
     const data = await this.authService.login(loginRequestDTO);
-    res.json(instanceToPlain(new SuccessResponse({ data })));
+    res.status(200).json(new SuccessResponse({ data }));
   });
 
   public register = handleErrorAsync(async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ export class AuthController {
     await validateDTO(registerRequestDTO);
 
     const data = await this.authService.register(registerRequestDTO);
-    return res.status(201).json(instanceToPlain(new SuccessResponse({ data })));
+    return res.status(201).json(new SuccessResponse({ data }));
   });
 
   public resetPassword = handleErrorAsync(async (req: Request, res: Response) => {

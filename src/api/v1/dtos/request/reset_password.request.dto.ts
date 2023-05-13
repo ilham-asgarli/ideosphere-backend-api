@@ -8,6 +8,9 @@ export default class ResetPasswordRequestDTO {
     id?: string;
 
     @IsDefined()
+    oldPassword?: string;
+
+    @IsDefined()
     @Length(6)
-    password?: string;
+    newPassword?: string;
 }
