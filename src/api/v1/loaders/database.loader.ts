@@ -21,4 +21,11 @@ export async function dbInit(): Promise<void> {
     
     await UserType.create({name: "customer"});
     await UserType.create({name: "company"});
+
+    await UserGender.create({name: "male"});
+    await UserGender.create({name: "female"});
+
+    await EventGender.create({name: "male"});
+    await EventGender.create({name: "female"});
+    await EventGender.create({name: "both"});
 }
