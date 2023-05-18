@@ -1,5 +1,5 @@
 FROM node:20
-WORKDIR /usr/src/ideosphere
+WORKDIR /usr/src/ideosphere-api
 COPY package*.json ./
 RUN npm install
 COPY . .
