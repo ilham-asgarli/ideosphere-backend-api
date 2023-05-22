@@ -8,9 +8,6 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare email: string;
   declare password: string;
   declare phone_number: string | null;
-  
-  declare created_at: CreationOptional<Date>;
-  declare updated_at: CreationOptional<Date>;
 }
 
 User.init({
@@ -37,8 +34,6 @@ User.init({
       len: [1, 25],
     },
   },
-  created_at: DataTypes.DATE,
-  updated_at: DataTypes.DATE
 }, {
   sequelize,
   tableName: 'users',

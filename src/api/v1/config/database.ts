@@ -11,6 +11,8 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   dialect: dbDriver,
   define: {
     underscored: true,
+    paranoid: true,
+    timestamps: true,
   },
 });
 

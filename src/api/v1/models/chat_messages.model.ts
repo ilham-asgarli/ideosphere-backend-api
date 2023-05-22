@@ -6,9 +6,6 @@ class ChatMessage extends Model<InferAttributes<ChatMessage>, InferCreationAttri
   declare id: CreationOptional<string>;
   declare chat_user_id: ForeignKey<ChatUser['id']>;
   declare message: string;
-
-  declare created_at: CreationOptional<Date>;
-  declare updated_at: CreationOptional<Date>;
 }
 
 ChatMessage.init({
@@ -21,8 +18,6 @@ ChatMessage.init({
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  created_at: DataTypes.DATE,
-  updated_at: DataTypes.DATE
 }, {
   sequelize,
   tableName: 'chat_messages',

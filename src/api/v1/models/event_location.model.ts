@@ -7,9 +7,6 @@ class EventLocation extends Model<InferAttributes<EventLocation>, InferCreationA
     declare event_id: ForeignKey<Event['id']>;
     declare latitude: number;
     declare longitude: number;
-
-    declare created_at: CreationOptional<Date>;
-    declare updated_at: CreationOptional<Date>;
 }
 
 EventLocation.init({
@@ -33,8 +30,6 @@ EventLocation.init({
             max: 180
         }
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'event_locations',

@@ -5,9 +5,6 @@ class Currency extends Model<InferAttributes<Currency>, InferCreationAttributes<
     declare id: CreationOptional<number>;
     declare name: string;
     declare iso_code: string;
-
-    declare created_at: CreationOptional<Date>;
-    declare updated_at: CreationOptional<Date>;
 }
 
 Currency.init({
@@ -25,8 +22,6 @@ Currency.init({
         allowNull: false,
         unique: true,
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'currencies',

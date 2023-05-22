@@ -7,9 +7,6 @@ class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Co
     declare user_id: ForeignKey<User['id']>;
     declare name: string | null;
     declare description: string | null;
-    
-    declare created_at: CreationOptional<Date>;
-    declare updated_at: CreationOptional<Date>;
 }
 
 Company.init({
@@ -25,8 +22,6 @@ Company.init({
             len: [0, 1000]
         }
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'companies',

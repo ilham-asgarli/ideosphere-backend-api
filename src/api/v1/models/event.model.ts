@@ -18,9 +18,6 @@ class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>
     declare min_age: number | null;
     declare entry_fee: number | null;
     declare participant_capacity: number | null;
-
-    declare created_at: CreationOptional<Date>;
-    declare updated_at: CreationOptional<Date>;
 }
 
 Event.init({
@@ -66,8 +63,6 @@ Event.init({
             min: 1,
         }
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'events',

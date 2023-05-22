@@ -10,9 +10,6 @@ class Customer extends Model<InferAttributes<Customer>, InferCreationAttributes<
     declare firstname: string | null;
     declare lastname: string | null;
     declare biography: string | null;
-
-    declare created_at: CreationOptional<Date>;
-    declare updated_at: CreationOptional<Date>;
 }
 
 Customer.init({
@@ -29,8 +26,6 @@ Customer.init({
             len: [0, 300]
         }
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'customers',

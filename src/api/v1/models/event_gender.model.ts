@@ -4,9 +4,6 @@ import { sequelize } from '../config/database';
 class EventGender extends Model<InferAttributes<EventGender>, InferCreationAttributes<EventGender>> {
     declare id: CreationOptional<number>;
     declare name: string;
-
-    declare created_at: CreationOptional<Date>;
-    declare updated_at: CreationOptional<Date>;
 }
 
 EventGender.init({
@@ -20,8 +17,6 @@ EventGender.init({
         allowNull: false,
         unique: true,
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE
 }, {
     sequelize,
     tableName: 'event_genders',
