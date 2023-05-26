@@ -1,30 +1,26 @@
 import { ChatDTO, ChatMessageDTO } from "../dtos/model";
-import { ChatUsersRequestDTO, GetMessagesRequestDTO, WriteMessageRequestDTO } from "../dtos/request";
-import { ChatUsersResponseDTO, GetMessagesResponseDTO } from "../dtos/response";
+import { ChatsRequestDTO, GetMessagesRequestDTO, WriteMessageRequestDTO } from "../dtos/request";
 import { BadRequestError } from "../errors";
 import { convertDTOtoModelJSON, convertModeltoDTOJSON } from "../helpers/dto_model_convert.helper";
 import { Chat, ChatMessage, ChatUser } from "../models";
 
 export class ChatService {
-    async getUsers(chatUsersRequestDTO: ChatUsersRequestDTO): Promise<ChatUsersResponseDTO> {
+    async getAll(chatsRequestDTO: ChatsRequestDTO): Promise<ChatDTO[]> {
         const chats = await Chat.findAll({
             order: [['created_at', 'DESC']],
             include: {
                 model: ChatUser,
                 where: {
-                    user_id: chatUsersRequestDTO.id,
+                    user_id: chatsRequestDTO.id,
                 },
             },
         });
 
-        const chatUsersResponseDTO = new ChatUsersResponseDTO();
-
-        chatUsersResponseDTO.chats = chats.map(function (chat) {
+        const all: ChatDTO[] = chats.map(function (chat) {
             return convertModeltoDTOJSON(ChatDTO, chat);
         });
 
-
-        return chatUsersResponseDTO;
+        return all;
     }
 
     async writeMessage(writeMessageRequestDTO: WriteMessageRequestDTO): Promise<void> {
@@ -36,7 +32,7 @@ export class ChatService {
         const chatMessage = await ChatMessage.create({ chat_user_id: chatUser.id, message: writeMessageRequestDTO.message! });
     }
 
-    async getMessages(getMessagesRequestDTO: GetMessagesRequestDTO): Promise<GetMessagesResponseDTO> {
+    async getMessages(getMessagesRequestDTO: GetMessagesRequestDTO): Promise<ChatMessageDTO[]> {
         const chatMessages = await ChatMessage.findAll({
             order: [['created_at', 'DESC']],
             include: {
@@ -47,12 +43,10 @@ export class ChatService {
             },
         });
 
-        const getMessagesResponseDTO = new GetMessagesResponseDTO();
-
-        getMessagesResponseDTO.chat_messages = chatMessages.map(function (chatMessage) {
+        const messages: ChatMessageDTO[] = chatMessages.map(function (chatMessage) {
             return convertModeltoDTOJSON(ChatMessageDTO, chatMessage);
         });
 
-        return getMessagesResponseDTO;
+        return messages;
     }
 }

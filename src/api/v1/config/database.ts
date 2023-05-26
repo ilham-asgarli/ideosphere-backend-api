@@ -13,6 +13,9 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     underscored: true,
     paranoid: true,
     timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    deletedAt: "deleted_at",
   },
 });
 

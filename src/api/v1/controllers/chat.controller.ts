@@ -4,20 +4,20 @@ import { handleErrorAsync } from "../middlewares/errors/async_error_handler.midd
 import { ChatService } from "../services";
 import { validateDTO } from "../helpers/validation.helper";
 import { SuccessResponse } from "../responses";
-import { ChatUsersRequestDTO, GetMessagesRequestDTO, WriteMessageRequestDTO } from '../dtos/request';
+import { ChatsRequestDTO, GetMessagesRequestDTO, WriteMessageRequestDTO } from '../dtos/request';
 import { getInfoFromRequest } from '../helpers/jwt.helper';
 
 export class ChatController {
     chatService = new ChatService();
 
-    getUsers = handleErrorAsync(async (req: Request, res: Response) => {
+    getAll = handleErrorAsync(async (req: Request, res: Response) => {
         const decoded = await getInfoFromRequest(req);
 
-        const chatUsersRequestDTO = plainToInstance(ChatUsersRequestDTO, req.body);
-        chatUsersRequestDTO.id = decoded.userId;
-        await validateDTO(chatUsersRequestDTO);
+        const chatsRequestDTO = plainToInstance(ChatsRequestDTO, req.body);
+        chatsRequestDTO.id = decoded.userId;
+        await validateDTO(chatsRequestDTO);
 
-        const data = await this.chatService.getUsers(chatUsersRequestDTO);
+        const data = await this.chatService.getAll(chatsRequestDTO);
         res.status(200).json(new SuccessResponse({ data }));
     });
 
