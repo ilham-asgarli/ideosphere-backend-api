@@ -1,5 +1,4 @@
-import { Request, Response } from 'express';
-import { getInfoFromRequest, verifyJwtToken } from '../helpers/jwt.helper';
+import { getInfoFromRequest } from '../helpers/jwt.helper';
 import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
 import { plainToInstance } from "class-transformer";
 import { SuccessResponse } from '../responses';
@@ -10,7 +9,7 @@ import { AuthService } from '../services';
 export class AuthController {
   authService = new AuthService();
 
-  login = handleErrorAsync(async (req: Request, res: Response) => {
+  login = handleErrorAsync(async (req, res) => {
     const loginRequestDTO = plainToInstance(LoginRequestDTO, req.body);
     await validateDTO(loginRequestDTO);
 
@@ -18,7 +17,7 @@ export class AuthController {
     res.status(200).json(new SuccessResponse({ data }));
   });
 
-  register = handleErrorAsync(async (req: Request, res: Response) => {
+  register = handleErrorAsync(async (req, res) => {
     const registerRequestDTO = plainToInstance(RegisterRequestDTO, req.body);
     await validateDTO(registerRequestDTO);
 
@@ -26,7 +25,7 @@ export class AuthController {
     return res.status(201).json(new SuccessResponse({ data }));
   });
 
-  resetPassword = handleErrorAsync(async (req: Request, res: Response) => {
+  resetPassword = handleErrorAsync(async (req, res) => {
     const decoded = await getInfoFromRequest(req);
 
     const resetPasswordRequestDTO = plainToInstance(ResetPasswordRequestDTO, req.body);

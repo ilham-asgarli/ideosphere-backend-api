@@ -1,5 +1,5 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
-import { sequelize } from '../config/database';
+import { sequelize } from '../config/sequelize.config';
 import { Event } from './event.model';
 
 class EventLocation extends Model<InferAttributes<EventLocation>, InferCreationAttributes<EventLocation>> {

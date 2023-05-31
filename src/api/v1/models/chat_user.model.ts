@@ -1,5 +1,5 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, ForeignKey } from 'sequelize';
-import { sequelize } from '../config/database';
+import { sequelize } from '../config/sequelize.config';
 import { User } from './user.model';
 import { Chat } from './chat.model';
 

@@ -7,7 +7,8 @@ export const securedOperation = (requiredRoles?: any) => {
         const authorization = req.headers.authorization;
         if (!authorization) return next(new UnauthenticatedError());
 
-        const token = authorization.split(' ')[1];
+        const auth = authorization.split(' ');
+        const token = auth[auth.length > 0 ? auth.length-1 : 0];
 
         const userRoles = verifyJwtToken(token)?.roles;
         

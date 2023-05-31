@@ -1,5 +1,5 @@
 import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import { sequelize } from '../config/database';
+import { sequelize } from '../config/sequelize.config';
 
 class UserType extends Model<InferAttributes<UserType>, InferCreationAttributes<UserType>> {
     declare id: CreationOptional<number>;

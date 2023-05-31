@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import express from 'express';
 import expressWs from 'express-ws';
+const app = expressWs(express()).app;
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,8 +12,6 @@ import routes from './api/v1/routes';
 import rateLimiter from 'express-rate-limit';
 import { errorHandlerMiddleware } from './api/v1/middlewares/errors/error_handler.middleware';
 import NotFoundError from './api/v1/errors/not_found.error';
-
-const app = expressWs(express()).app;
 
 /*app.use(
     rateLimiter({
