@@ -2,7 +2,6 @@ import { Op } from "sequelize";
 import { ChatsRequestDTO, GetMessagesRequestDTO, ReadMessageRequestDTO, WriteMessageRequestDTO } from "../dtos/request";
 import { GetChatsResponseDTO, GetMessagesResponseDTO } from "../dtos/response";
 import { BadRequestError } from "../errors";
-import { toGetMessagesResponseDTO } from "../mappers";
 import { toGetChatsResponseDTO, toWriteMessagesResponseDTO } from "../mappers/chat.mapper";
 import { Chat, ChatMessage, ChatUser, MessageOpenedUser } from "../models";
 

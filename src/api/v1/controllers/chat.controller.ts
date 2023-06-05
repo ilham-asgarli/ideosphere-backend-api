@@ -10,6 +10,7 @@ import { ChatUser, MessageOpenedUser } from "../models";
 export class ChatController {
     chatService = new ChatService();
     clients: Map<string, ws> = new Map();
+    pingInterval = 15000;
 
     getMessages = handleErrorAsyncWS(async (ws, req) => {
         const decoded = await getInfoFromRequest(req);
@@ -23,9 +24,21 @@ export class ChatController {
         const data = await this.chatService.getAll(chatsRequestDTO);
         ws.send(JSON.stringify(new SocketResponse({ name: "start", data })));
 
+        const sendPingMessages = () => {
+            for (const [id, client] of this.clients.entries()) {
+                if (client.readyState === client.OPEN) {
+                    client.ping();
+                } else {
+                    this.clients.delete(id);
+                }   
+            }
+        }
+
         this.clients.set(chatsRequestDTO.user_id!, ws);
+        setInterval(sendPingMessages, this.pingInterval);
 
         ws.onmessage = async (event) => {
+            console.log(event);
             const eventData = JSON.parse(event.data.toString());
 
             switch (eventData.name) {

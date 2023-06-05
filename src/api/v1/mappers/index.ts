@@ -1,5 +1,5 @@
-import { toGetMessagesResponseDTO } from "./chat.mapper";
+import { /*toGetMessagesResponseDTO*/ } from "./chat.mapper";
 
 export {
-    toGetMessagesResponseDTO,
+    /*toGetMessagesResponseDTO,*/
 }
