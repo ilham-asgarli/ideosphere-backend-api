@@ -17,6 +17,9 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     updatedAt: "updated_at",
     deletedAt: "deleted_at",
   },
+  dialectOptions: {
+    connectTimeout: 30000,
+  },
 });
 
 export { sequelize }

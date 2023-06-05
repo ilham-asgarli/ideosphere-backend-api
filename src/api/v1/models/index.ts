@@ -11,6 +11,8 @@ import { ChatUser } from "./chat_user.model";
 import { Event } from "./event.model";
 import { EventParticipant } from "./event_participant.model";
 import { EventLocation } from "./event_location.model";
+import { MessageOpenedUser } from "./message_opened_user.model";
+import { MessageReceivedUser } from "./message_received_user.model";
 
 
 export {
@@ -24,6 +26,8 @@ export {
     Chat,
     ChatMessage,
     ChatUser,
+    MessageOpenedUser,
+    MessageReceivedUser,
     Event,
     EventParticipant,
     EventLocation,

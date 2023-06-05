@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import express from 'express';
 import expressWs from 'express-ws';
-const app = expressWs(express()).app;
+const app = express();
+const { getWss } = expressWs(app);
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -29,6 +30,10 @@ app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', (req, res, next) => {
+    (req as any).getWss = getWss;
+    next();
+});
 app.use('/v1', routes);
 app.use('*', () => {
     throw new NotFoundError();

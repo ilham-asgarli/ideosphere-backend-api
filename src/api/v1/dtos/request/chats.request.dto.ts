@@ -5,5 +5,5 @@ export default class ChatsRequestDTO {
     @Expose()
     @IsDefined()
     @IsUUID()
-    id?: string;
+    user_id?: string;
 }
