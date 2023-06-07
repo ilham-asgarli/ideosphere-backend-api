@@ -8,32 +8,35 @@ class ChatMessage extends Model<InferAttributes<ChatMessage>, InferCreationAttri
   declare message: string;
 }
 
-ChatMessage.init({
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
+ChatMessage.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
   },
-  message: {
-    type: DataTypes.TEXT,
-    allowNull: false,
+  {
+    sequelize,
+    tableName: 'chat_messages',
   },
-}, {
-  sequelize,
-  tableName: 'chat_messages',
-});
+);
 
 ChatMessage.belongsTo(ChatUser, {
   foreignKey: {
     name: 'chat_user_id',
     allowNull: false,
-  }
+  },
 });
 ChatUser.hasMany(ChatMessage, {
   foreignKey: {
     name: 'chat_user_id',
     allowNull: false,
-  }
+  },
 });
 
 export { ChatMessage };

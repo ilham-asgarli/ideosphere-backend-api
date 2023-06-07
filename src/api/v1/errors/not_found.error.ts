@@ -3,7 +3,7 @@ import CustomError from './custom.error';
 
 class NotFoundError extends CustomError {
   constructor(message: string = 'Not Found') {
-    super({message : message, statusCode: StatusCodes.NOT_FOUND});
+    super({ message: message, statusCode: StatusCodes.NOT_FOUND });
   }
 }
 

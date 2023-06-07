@@ -1,14 +1,14 @@
-import { IsDefined, IsUUID, ValidateNested } from "class-validator";
-import { Expose, Type } from "class-transformer";
+import { IsDefined, IsUUID, ValidateNested } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 import { UserDTO } from '../model';
-import GetMessagesResponseDTO from "./get_messages.response.dto";
+import GetMessagesResponseDTO from './get_messages.response.dto';
 
 export default class GetChatsResponseDTO {
-    id?: string;
+  id?: string;
 
-    name?: string;
+  name?: string;
 
-    messages?: GetMessagesResponseDTO[];
+  messages?: GetMessagesResponseDTO[];
 
-    created_at?: Date;
+  created_at?: Date;
 }

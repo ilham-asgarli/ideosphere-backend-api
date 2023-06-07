@@ -3,7 +3,7 @@ import CustomError from './custom.error';
 
 class InvalidTokenError extends CustomError {
   constructor(message: string = 'Invalid Token') {
-    super({message : message, statusCode: StatusCodes.UNAUTHORIZED});
+    super({ message: message, statusCode: StatusCodes.UNAUTHORIZED });
   }
 }
 

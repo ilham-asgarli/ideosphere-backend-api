@@ -6,8 +6,7 @@ import UnauthorizedError from './forbidden.error';
 import ValidationError from './validation.error';
 import InvalidTokenError from './invalid-token.error';
 
-
-export { 
+export {
   CustomError,
   UnauthenticatedError,
   NotFoundError,
@@ -16,4 +15,3 @@ export {
   ValidationError,
   InvalidTokenError,
 };
-

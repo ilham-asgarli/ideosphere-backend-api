@@ -3,7 +3,7 @@ import CustomError from './custom.error';
 
 class BadRequestError extends CustomError {
   constructor(message: string = 'Bad Request') {
-    super({message : message, statusCode: StatusCodes.BAD_REQUEST});
+    super({ message: message, statusCode: StatusCodes.BAD_REQUEST });
   }
 }
 

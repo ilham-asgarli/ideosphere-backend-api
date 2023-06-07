@@ -2,29 +2,32 @@ import { Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOpt
 import { sequelize } from '../config/sequelize.config';
 
 class Currency extends Model<InferAttributes<Currency>, InferCreationAttributes<Currency>> {
-    declare id: CreationOptional<number>;
-    declare name: string;
-    declare iso_code: string;
+  declare id: CreationOptional<number>;
+  declare name: string;
+  declare iso_code: string;
 }
 
-Currency.init({
+Currency.init(
+  {
     id: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        primaryKey: true,
-        autoIncrement: true,
+      type: DataTypes.INTEGER.UNSIGNED,
+      primaryKey: true,
+      autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     iso_code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
-}, {
+  },
+  {
     sequelize,
     tableName: 'currencies',
-});
+  },
+);
 
 export { Currency };

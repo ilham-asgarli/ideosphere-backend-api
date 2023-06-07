@@ -31,22 +31,22 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', (req, res, next) => {
-    (req as any).getWss = getWss;
-    next();
+  (req as any).getWss = getWss;
+  next();
 });
 app.use('/v1', routes);
 app.use('*', () => {
-    throw new NotFoundError();
+  throw new NotFoundError();
 });
 app.use(errorHandlerMiddleware);
 
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, async () => {
-    console.log(`Listening on port ${PORT}`);
+  console.log(`Listening on port ${PORT}`);
 
-    try {
-        await loaders();
-    } catch (e) {
-        //console.log(e);
-    }
+  try {
+    await loaders();
+  } catch (e) {
+    //console.log(e);
+  }
 });

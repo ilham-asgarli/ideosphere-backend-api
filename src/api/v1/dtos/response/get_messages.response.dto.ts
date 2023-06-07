@@ -1,15 +1,15 @@
 export default class GetMessagesResponseDTO {
-    id?: string;
-    
-    message?: string;
+  id?: string;
 
-    opened?: boolean;
+  message?: string;
 
-    read_all?: boolean;
+  opened?: boolean;
 
-    user_id?: string;
+  read_all?: boolean;
 
-    owner?: boolean;
+  user_id?: string;
 
-    created_at?: Date;
+  owner?: boolean;
+
+  created_at?: Date;
 }

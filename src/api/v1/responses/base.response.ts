@@ -1,9 +1,9 @@
 class BaseResponse {
-    status: string;
+  status: string;
 
-    constructor({ status }: { status: string }) {
-        this.status = status;
-    }
+  constructor({ status }: { status: string }) {
+    this.status = status;
+  }
 }
 
 export default BaseResponse;

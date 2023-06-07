@@ -5,15 +5,18 @@ class Chat extends Model<InferAttributes<Chat>, InferCreationAttributes<Chat>> {
   declare id: CreationOptional<string>;
 }
 
-Chat.init({
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
+Chat.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
   },
-}, {
-  sequelize,
-  tableName: 'chats',
-});
+  {
+    sequelize,
+    tableName: 'chats',
+  },
+);
 
 export { Chat };

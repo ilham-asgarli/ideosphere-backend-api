@@ -5,7 +5,7 @@ class ValidationError extends CustomError {
   data: any;
 
   constructor(message: string = 'Validation Error', data: any) {
-    super({message : message, statusCode: StatusCodes.CONFLICT});
+    super({ message: message, statusCode: StatusCodes.CONFLICT });
     this.data = data;
   }
 }

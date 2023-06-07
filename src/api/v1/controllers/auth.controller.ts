@@ -7,7 +7,7 @@ import { AuthValidator } from '../validators';
 export class AuthController {
   authValidator = new AuthValidator();
   authService = new AuthService();
-  
+
   checkEmail = handleErrorAsync(async (req, res) => {
     this.authValidator.checkEmail(req.body);
 

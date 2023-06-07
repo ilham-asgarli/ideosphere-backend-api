@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { ErrorRequestHandler } from 'express';
-import { instanceToPlain } from "class-transformer";
+import { instanceToPlain } from 'class-transformer';
 import { ErrorResponse, FailResponse } from '../../responses';
 import { CustomError, UnauthenticatedError, ValidationError } from '../../errors';
 

@@ -3,7 +3,7 @@ import CustomError from './custom.error';
 
 class UnauthorizedError extends CustomError {
   constructor(message: string = 'Forbidden') {
-    super({message : message, statusCode: StatusCodes.FORBIDDEN});
+    super({ message: message, statusCode: StatusCodes.FORBIDDEN });
   }
 }
 

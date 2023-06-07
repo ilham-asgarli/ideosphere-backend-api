@@ -9,41 +9,44 @@ class MessageOpenedUser extends Model<InferAttributes<MessageOpenedUser>, InferC
   declare user_id: ForeignKey<User['id']>;
 }
 
-MessageOpenedUser.init({
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
+MessageOpenedUser.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
   },
-}, {
-  sequelize,
-  tableName: 'message_opened_users',
-});
+  {
+    sequelize,
+    tableName: 'message_opened_users',
+  },
+);
 
 MessageOpenedUser.belongsTo(ChatMessage, {
   foreignKey: {
     name: 'message_id',
     allowNull: false,
-  }
+  },
 });
 ChatMessage.hasMany(MessageOpenedUser, {
   foreignKey: {
     name: 'message_id',
     allowNull: false,
-  }
+  },
 });
 
 MessageOpenedUser.belongsTo(User, {
   foreignKey: {
     name: 'user_id',
     allowNull: false,
-  }
+  },
 });
 User.hasMany(MessageOpenedUser, {
   foreignKey: {
     name: 'user_id',
     allowNull: false,
-  }
+  },
 });
 
 export { MessageOpenedUser };

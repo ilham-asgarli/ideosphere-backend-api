@@ -1,7 +1,4 @@
-import { AuthValidator } from "./auth.validator";
-import { ChatValidator } from "./chat.validator";
+import { AuthValidator } from './auth.validator';
+import { ChatValidator } from './chat.validator';
 
-export {
-    AuthValidator,
-    ChatValidator,
-}
+export { AuthValidator, ChatValidator };

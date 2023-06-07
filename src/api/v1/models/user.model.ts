@@ -10,46 +10,49 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare phone_number: string | null;
 }
 
-User.init({
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true,
+User.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+      validate: {
+        len: [1, 25],
+      },
     },
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  {
+    sequelize,
+    tableName: 'users',
   },
-  phone_number: {
-    type: DataTypes.STRING,
-    validate: {
-      len: [1, 25],
-    },
-  },
-}, {
-  sequelize,
-  tableName: 'users',
-});
+);
 
 User.belongsTo(UserType, {
   foreignKey: {
     name: 'user_type_id',
     allowNull: false,
-  }
+  },
 });
 UserType.hasMany(User, {
   foreignKey: {
     name: 'user_type_id',
     allowNull: false,
-  }
+  },
 });
 
 export { User };
