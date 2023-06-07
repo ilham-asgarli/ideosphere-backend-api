@@ -1,9 +1,9 @@
-import { User } from '../models';
+import { Company, Customer, User } from '../models';
 import { generatePasswordHash, verifyPasswordHash } from '../helpers/hash.helper';
 import { generateJwtToken } from '../helpers/jwt.helper';
 import { BadRequestError, NotFoundError } from "../errors";
-import { convertModeltoDTOJSON, convertDTOtoModelJSON } from '../helpers/dto_model_convert.helper';
-import { UserDTO } from '../dtos/model';
+import { convertModeltoDTOJSON } from '../helpers/dto_model_convert.helper';
+import { CompanyDTO, CustomerDTO, UserDTO } from '../dtos/model';
 import { LoginResponseDTO, RegisterResponseDTO } from '../dtos/response';
 
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
             throw new NotFoundError("User with this email not exists.");
     }
 
-    async login(body: any): Promise<LoginResponseDTO> {
+    async signIn(body: any): Promise<LoginResponseDTO> {
         const user = await User.findOne({ where: { email: body.email } });
 
         if (!user)
@@ -34,7 +34,9 @@ export class AuthService {
         return loginResponseDTO;
     }
 
-    async register(body: any): Promise<RegisterResponseDTO> {
+    async signUp(body: any): Promise<RegisterResponseDTO> {
+        const registerResponseDTO = new RegisterResponseDTO();
+
         const hashedPassword = await generatePasswordHash(body.password!);
 
         body.password = hashedPassword;
@@ -47,9 +49,28 @@ export class AuthService {
             user_type_id,
         });
 
+        if(user_type_id == 1) {
+            const customer = await Customer.create({
+                user_id: user.id,
+                firstname: body.customer.firstname,
+                lastname: body.customer.lastname,
+                biography: body.customer.biography,
+                gender_id: body.customer.gender_id,
+            });
+
+            registerResponseDTO.customer = convertModeltoDTOJSON(CustomerDTO, customer);
+        } else if(user_type_id == 2){
+            const company = await Company.create({
+                user_id: user.id,
+                name: body.company.name,
+                description: body.company.description,
+            });
+
+            registerResponseDTO.company = convertModeltoDTOJSON(CompanyDTO, company);
+        }
+
         const token = generateJwtToken({ userId: user.id });
 
-        const registerResponseDTO = new RegisterResponseDTO();
         registerResponseDTO.token = token;
         registerResponseDTO.user = convertModeltoDTOJSON(UserDTO, user);
 

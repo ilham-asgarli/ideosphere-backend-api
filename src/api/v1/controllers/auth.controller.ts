@@ -18,14 +18,14 @@ export class AuthController {
   signIn = handleErrorAsync(async (req, res) => {
     this.authValidator.signIn(req.body);
 
-    const data = await this.authService.login(req.body);
+    const data = await this.authService.signIn(req.body);
     res.status(200).json(new SuccessResponse({ data }));
   });
 
   signUp = handleErrorAsync(async (req, res) => {
     this.authValidator.signUp(req.body);
 
-    const data = await this.authService.register(req.body);
+    const data = await this.authService.signUp(req.body);
     return res.status(201).json(new SuccessResponse({ data }));
   });
 

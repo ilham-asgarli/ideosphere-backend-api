@@ -36,7 +36,6 @@ export class ChatController {
         setInterval(sendPingMessages, this.pingInterval);
 
         ws.onmessage = async (event) => {
-            console.log(event);
             const eventData = JSON.parse(event.data.toString());
 
             switch (eventData.name) {

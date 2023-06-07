@@ -1,6 +1,6 @@
 import { Expose, Type } from "class-transformer";
 import { IsDefined, ValidateNested } from "class-validator";
-import { UserDTO } from "../model";
+import { CompanyDTO, CustomerDTO, UserDTO } from "../model";
 
 export default class RegisterResponseDTO {
     @Expose()
@@ -12,4 +12,8 @@ export default class RegisterResponseDTO {
     @ValidateNested()
     @Type(() => UserDTO)
     user?: UserDTO;
+
+    customer?: CustomerDTO;
+
+    company?: CompanyDTO;
 }
