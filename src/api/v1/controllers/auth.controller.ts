@@ -1,39 +1,41 @@
 import { getInfoFromRequest } from '../helpers/jwt.helper';
 import { handleErrorAsync } from '../middlewares/errors/async_error_handler.middleware';
-import { plainToInstance } from "class-transformer";
 import { SuccessResponse } from '../responses';
-import { validateDTO } from '../helpers/validation.helper';
-import { LoginRequestDTO, RegisterRequestDTO, ResetPasswordRequestDTO } from '../dtos/request';
 import { AuthService } from '../services';
+import { AuthValidator } from '../validators';
 
 export class AuthController {
+  authValidator = new AuthValidator();
   authService = new AuthService();
+  
+  checkEmail = handleErrorAsync(async (req, res) => {
+    this.authValidator.checkEmail(req.body);
 
-  login = handleErrorAsync(async (req, res) => {
-    const loginRequestDTO = plainToInstance(LoginRequestDTO, req.body);
-    await validateDTO(loginRequestDTO);
+    const data = await this.authService.checkEmail(req.body);
+    res.status(204).end();
+  });
 
-    const data = await this.authService.login(loginRequestDTO);
+  signIn = handleErrorAsync(async (req, res) => {
+    this.authValidator.signIn(req.body);
+
+    const data = await this.authService.login(req.body);
     res.status(200).json(new SuccessResponse({ data }));
   });
 
-  register = handleErrorAsync(async (req, res) => {
-    const registerRequestDTO = plainToInstance(RegisterRequestDTO, req.body);
-    await validateDTO(registerRequestDTO);
+  signUp = handleErrorAsync(async (req, res) => {
+    this.authValidator.signUp(req.body);
 
-    const data = await this.authService.register(registerRequestDTO);
+    const data = await this.authService.register(req.body);
     return res.status(201).json(new SuccessResponse({ data }));
   });
 
   resetPassword = handleErrorAsync(async (req, res) => {
     const decoded = await getInfoFromRequest(req);
 
-    const resetPasswordRequestDTO = plainToInstance(ResetPasswordRequestDTO, req.body);
-    resetPasswordRequestDTO.id = decoded.userId;
+    req.body.id = decoded.userId;
+    this.authValidator.resetPassword(req.body);
 
-    await validateDTO(resetPasswordRequestDTO);
-
-    await this.authService.resetPassword(resetPasswordRequestDTO);
+    await this.authService.resetPassword(req.body);
 
     res.status(204).end();
   });

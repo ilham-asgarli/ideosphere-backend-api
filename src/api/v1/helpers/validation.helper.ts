@@ -1,12 +1,10 @@
-import { validate } from "class-validator";
 import { ValidationError } from "../errors";
+import Joi from "joi";
 
-export async function validateDTO(object: Object) {
-  const validatonErrors = await validate(object, { stopAtFirstError: true, skipMissingProperties: true });
+export function validate(body: any, schema: Joi.ObjectSchema<any>) {
+  const { error } = schema.validate(body);
 
-  if (validatonErrors.length > 0) {
-    for (const type in validatonErrors[0].constraints) {
-      throw new ValidationError(undefined, { [validatonErrors[0].property]: validatonErrors[0].constraints[type] });
-    }
+  if (error) {
+    throw new ValidationError(undefined, { [error.details[0].path.join(".")]: error.details[0].message.substring(error.details[0].message.indexOf(" ") + 1) });
   }
 }

@@ -1,36 +1,35 @@
 import { Op } from "sequelize";
-import { ChatsRequestDTO, GetMessagesRequestDTO, ReadMessageRequestDTO, WriteMessageRequestDTO } from "../dtos/request";
 import { GetChatsResponseDTO, GetMessagesResponseDTO } from "../dtos/response";
 import { BadRequestError } from "../errors";
 import { toGetChatsResponseDTO, toWriteMessagesResponseDTO } from "../mappers/chat.mapper";
 import { Chat, ChatMessage, ChatUser, MessageOpenedUser } from "../models";
 
 export class ChatService {
-    async getAll(chatsRequestDTO: ChatsRequestDTO): Promise<GetChatsResponseDTO[]> {
+    async getAll(body: any): Promise<GetChatsResponseDTO[]> {
         const chats = await Chat.findAll({
             order: [['created_at', 'DESC']],
             include: {
                 model: ChatUser,
                 where: {
-                    user_id: chatsRequestDTO.user_id,
+                    user_id: body.user_id,
                 },
             },
         });
 
         const all: GetChatsResponseDTO[] = await Promise.all(
             chats.map(async (chat) => {
-                return await toGetChatsResponseDTO(chatsRequestDTO, chat);
+                return await toGetChatsResponseDTO(body, chat);
             })
         );
 
         return all;
     }
 
-    async writeMessage(writeMessageRequestDTO: WriteMessageRequestDTO): Promise<{ chat_id: string, message: GetMessagesResponseDTO }> {
+    async writeMessage(body: any): Promise<{ chat_id: string, message: GetMessagesResponseDTO }> {
         const chatUser = await ChatUser.findOne({
             where: {
-                chat_id: writeMessageRequestDTO.chat_id,
-                user_id: writeMessageRequestDTO.user_id,
+                chat_id: body.chat_id,
+                user_id: body.user_id,
             }
         });
 
@@ -39,9 +38,9 @@ export class ChatService {
 
         const chatMessage = await ChatMessage.create({
             chat_user_id: chatUser.id,
-            message: writeMessageRequestDTO.message!
+            message: body.message!
         });
-        return { chat_id: writeMessageRequestDTO.chat_id!, message: await toWriteMessagesResponseDTO(writeMessageRequestDTO, chatMessage) };
+        return { chat_id: body.chat_id!, message: await toWriteMessagesResponseDTO(body, chatMessage) };
     }
 
     /*async getMessages(getMessagesRequestDTO: GetMessagesRequestDTO): Promise<any> {
@@ -63,15 +62,15 @@ export class ChatService {
     }*/
 
 
-    async readMessages(readMessageRequestDTO: ReadMessageRequestDTO) {
+    async readMessages(body: any) {
         const messageOpenedUsers = await Promise.all(
-            readMessageRequestDTO.messages!.map(async (e) => {
+            body.messages!.map(async (e: string) => {
                 var chatMessage = await ChatMessage.findOne({
                     include: {
                         model: ChatUser,
                         where: {
                             user_id: {
-                                [Op.not]: readMessageRequestDTO.user_id,
+                                [Op.not]: body.user_id,
                             }
                         }
                     },
@@ -83,7 +82,7 @@ export class ChatService {
                 return chatMessage ? await MessageOpenedUser.findOrCreate({
                     where: {
                         message_id: e,
-                        user_id: readMessageRequestDTO.user_id,
+                        user_id: body.user_id,
                     }
                 }) : null;
             }),

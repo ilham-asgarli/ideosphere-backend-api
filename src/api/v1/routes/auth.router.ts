@@ -5,8 +5,9 @@ import { AuthController } from '../controllers';
 const router = Router();
 const authController = new AuthController();
 
-router.post('/register', authController.register);
-router.post('/login', authController.login);
+router.post('/check-email', authController.checkEmail);
+router.post('/sign-up', authController.signUp);
+router.post('/sign-in', authController.signIn);
 
 router.use(securedOperation());
 

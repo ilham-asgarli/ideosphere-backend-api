@@ -40,7 +40,7 @@ app.use('*', () => {
 });
 app.use(errorHandlerMiddleware);
 
-const PORT: Number = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, async () => {
     console.log(`Listening on port ${PORT}`);
 

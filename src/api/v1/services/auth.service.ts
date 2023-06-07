@@ -4,17 +4,23 @@ import { generateJwtToken } from '../helpers/jwt.helper';
 import { BadRequestError, NotFoundError } from "../errors";
 import { convertModeltoDTOJSON, convertDTOtoModelJSON } from '../helpers/dto_model_convert.helper';
 import { UserDTO } from '../dtos/model';
-import { LoginRequestDTO, RegisterRequestDTO, ResetPasswordRequestDTO } from '../dtos/request';
 import { LoginResponseDTO, RegisterResponseDTO } from '../dtos/response';
 
 export class AuthService {
-    async login(loginRequestDTO: LoginRequestDTO): Promise<LoginResponseDTO> {
-        const user = await User.findOne({ where: { email: loginRequestDTO.email } });
+    async checkEmail(body: any) {
+        const user = await User.findOne({ where: { email: body.email } });
+
+        if (!user)
+            throw new NotFoundError("User with this email not exists.");
+    }
+
+    async login(body: any): Promise<LoginResponseDTO> {
+        const user = await User.findOne({ where: { email: body.email } });
 
         if (!user)
             throw new BadRequestError('Invalid email or password.');
 
-        const isPasswordValid = await verifyPasswordHash(loginRequestDTO.password!, user.password);
+        const isPasswordValid = await verifyPasswordHash(body.password!, user.password);
 
         if (!isPasswordValid)
             throw new BadRequestError('Invalid email or password.');
@@ -28,35 +34,43 @@ export class AuthService {
         return loginResponseDTO;
     }
 
-    async register(registerRequestDTO: RegisterRequestDTO): Promise<RegisterResponseDTO> {
-        const hashedPassword = await generatePasswordHash(registerRequestDTO.password!);
+    async register(body: any): Promise<RegisterResponseDTO> {
+        const hashedPassword = await generatePasswordHash(body.password!);
 
-        registerRequestDTO.password = hashedPassword;
-        const user = await User.create(convertDTOtoModelJSON(User, registerRequestDTO));
+        body.password = hashedPassword;
+
+        const user_type_id = body.company == null ? 1 : 2;
+        const user = await User.create({
+            email: body.email,
+            password: body.password,
+            phone_number: body.phone_number,
+            user_type_id,
+        });
 
         const token = generateJwtToken({ userId: user.id });
 
         const registerResponseDTO = new RegisterResponseDTO();
         registerResponseDTO.token = token;
+        registerResponseDTO.user = convertModeltoDTOJSON(UserDTO, user);
 
         return registerResponseDTO;
     }
 
-    async resetPassword(resetPasswordRequestDTO: ResetPasswordRequestDTO): Promise<void> {
-        const user = await User.findByPk(resetPasswordRequestDTO.id);
+    async resetPassword(body: any): Promise<void> {
+        const user = await User.findByPk(body.id);
 
         if (!user)
             throw new NotFoundError('User not found.');
 
-        const isPasswordValid = await verifyPasswordHash(resetPasswordRequestDTO.oldPassword!, user.password);
+        const isPasswordValid = await verifyPasswordHash(body.oldPassword!, user.password);
 
         if (!isPasswordValid)
             throw new BadRequestError('Current password is wrong.');
 
-        if (resetPasswordRequestDTO.oldPassword! === resetPasswordRequestDTO.newPassword!)
+        if (body.oldPassword! === body.newPassword!)
             throw new BadRequestError("New password can't be the same as old password");
 
-        const passwordHash = await generatePasswordHash(resetPasswordRequestDTO.newPassword!);
+        const passwordHash = await generatePasswordHash(body.newPassword!);
 
         await user.update({ password: passwordHash });
     }
