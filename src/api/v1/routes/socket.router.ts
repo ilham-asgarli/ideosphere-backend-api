@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { securedOperation } from '../middlewares/auth/secured_operation.middlware';
-import { ChatController } from '../controllers';
+import { SocketController } from '../controllers';
 
 const router = Router();
-const chatController = new ChatController();
+const chatController = new SocketController();
 
 router.use(securedOperation());
 

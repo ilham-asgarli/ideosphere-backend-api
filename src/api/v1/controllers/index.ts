@@ -1,5 +1,7 @@
 import { AuthController } from './auth.controller';
-import { ChatController } from './chat.controller';
-import { EventController } from './event.controller';
+import { SocketController } from './socket.controller';
 
-export { AuthController, ChatController, EventController };
+export { 
+    AuthController,
+    SocketController,
+ };

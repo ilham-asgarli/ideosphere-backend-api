@@ -1,12 +1,10 @@
 import { Router } from 'express';
 import auth from './auth.router';
-import chat from './chat.router';
-import event from './event.router';
+import socket from './socket.router';
 
 const router = Router();
 
 router.use('/auth', auth);
-router.use('/chat', chat);
-router.use('/event', event);
+router.use('/socket', socket);
 
 export default router;

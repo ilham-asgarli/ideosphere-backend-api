@@ -6,11 +6,25 @@ import ws from 'ws';
 import { ChatUser, MessageOpenedUser } from '../models';
 import { ChatValidator } from '../validators';
 
-export class ChatController {
+export class SocketController {
   chatValidator = new ChatValidator();
   chatService = new ChatService();
   clients: Map<string, ws> = new Map();
   pingInterval = 15000;
+
+  constructor() {
+    setInterval(this.sendPingMessages, this.pingInterval);
+  }
+
+  sendPingMessages = () => {
+    for (const [id, client] of this.clients.entries()) {
+      if (client.readyState === client.OPEN) {
+        client.ping();
+      } else {
+        this.clients.delete(id);
+      }
+    }
+  };
 
   getMessages = handleErrorAsyncWS(async (ws, req) => {
     const decoded = await getInfoFromRequest(req);
@@ -19,21 +33,10 @@ export class ChatController {
     req.body.user_id = decoded.userId;
     this.chatValidator.getMessages(req.body);
 
+    this.clients.set(req.body.user_id!, ws);
+
     const data = await this.chatService.getAll(req.body);
     ws.send(JSON.stringify(new SocketResponse({ name: 'start', data })));
-
-    const sendPingMessages = () => {
-      for (const [id, client] of this.clients.entries()) {
-        if (client.readyState === client.OPEN) {
-          client.ping();
-        } else {
-          this.clients.delete(id);
-        }
-      }
-    };
-
-    this.clients.set(req.body.user_id!, ws);
-    setInterval(sendPingMessages, this.pingInterval);
 
     ws.onmessage = async (event) => {
       const eventData = JSON.parse(event.data.toString());
@@ -65,7 +68,7 @@ export class ChatController {
                 await validateDTO(getMessagesRequestDTO);
                 data = await this.chatService.getMessages(getMessagesRequestDTO);
                 ws.send(JSON.stringify(new SocketResponse({ name: "messages", data })));*/
-      } catch (e) {}
+      } catch (e) { }
     };
 
     const onOpenMessages = async (eventData: any) => {
@@ -109,19 +112,15 @@ export class ChatController {
             eventData.body.user_id == chat.user_id
               ? true
               : (await MessageOpenedUser.findOne({
-                  where: {
-                    message_id: data.message.id,
-                    user_id: chat.user_id,
-                  },
-                })) != null;
+                where: {
+                  message_id: data.message.id,
+                  user_id: chat.user_id,
+                },
+              })) != null;
           data.message.owner = eventData.body.user_id == chat.user_id;
           return data;
         });
-        /*wss.clients.forEach(element => {
-                    element.send(JSON.stringify(new SocketResponse({ name: "new-message", data })));
-                });*/
-        //ws.send(JSON.stringify(new SocketResponse({ name: "new-message", data })));
-      } catch (e) {}
+      } catch (e) { }
     };
 
     const sendToChat = async (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => {

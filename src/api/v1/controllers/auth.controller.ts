@@ -36,7 +36,6 @@ export class AuthController {
     this.authValidator.resetPassword(req.body);
 
     await this.authService.resetPassword(req.body);
-
     res.status(204).end();
   });
 }
