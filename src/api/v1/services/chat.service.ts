@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { GetChatsResponseDTO, GetMessagesResponseDTO } from '../dtos/response';
+import { GetChatsResponseDTO } from '../dtos/response';
 import { BadRequestError } from '../errors';
 import { toGetChatsResponseDTO, toWriteMessagesResponseDTO } from '../mappers/chat.mapper';
 import { Chat, ChatMessage, ChatUser, MessageOpenedUser } from '../models';
@@ -25,7 +25,35 @@ export class ChatService {
     return all;
   }
 
-  async writeMessage(body: any): Promise<{ chat_id: string; message: GetMessagesResponseDTO }> {
+  async onOpenMessages(body: any, sendToChat: (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => any) {
+    await this.readMessages(body);
+
+    const chatUserCount = await ChatUser.count({
+      where: {
+        chat_id: body.chat_id,
+      },
+    });
+
+    var messages: any[] = [];
+
+    await Promise.all(
+      body.messages!.map(async (id: string) => {
+        const messageOpenedUserCount = await MessageOpenedUser.count({
+          where: {
+            message_id: id,
+          },
+        });
+
+        messages.push({ id, read_all: chatUserCount - 1 == messageOpenedUserCount });
+      }),
+    );
+
+    sendToChat('opened-messages', body.chat_id!, async (chat: ChatUser) => {
+      return { chat_id: body.chat_id, messages: messages };
+    });
+  }
+
+  async writeMessage(body: any) {
     const chatUser = await ChatUser.findOne({
       where: {
         chat_id: body.chat_id,
@@ -39,51 +67,55 @@ export class ChatService {
       chat_user_id: chatUser.id,
       message: body.message!,
     });
-    return { chat_id: body.chat_id!, message: await toWriteMessagesResponseDTO(body, chatMessage) };
   }
 
-  /*async getMessages(getMessagesRequestDTO: GetMessagesRequestDTO): Promise<any> {
-        const chatMessages = await ChatMessage.findAll({
-            order: [['created_at', 'DESC']],
-            include: {
-                model: ChatUser,
-                where: {
-                    chat_id: getMessagesRequestDTO.chat_id,
-                },
-            },
-        });
+  async onNewMessage(sendToChat: (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => any) {
+    ChatMessage.afterCreate('newMessage', async (instance, options) => {
+      const chatUser = await ChatUser.findByPk(instance.chat_user_id);
 
-        const messages: GetMessagesResponseDTO[] = await Promise.all(chatMessages.map(async (chatMessage) => {
-            return await toGetMessagesResponseDTO(getMessagesRequestDTO, chatMessage);
-        }));
+      if (chatUser == null)
+        return
 
-        return { chat_id: getMessagesRequestDTO.chat_id, messages };
-    }*/
+      sendToChat('new-message', chatUser.chat_id!, async (chat: ChatUser) => {
+        let data = { chat_id: chatUser.chat_id!, message: await toWriteMessagesResponseDTO(chatUser, instance) }
+
+        data.message.opened =
+          chatUser.user_id == chat.user_id
+            ? true
+            : (await MessageOpenedUser.findOne({
+              where: {
+                message_id: data.message.id,
+                user_id: chat.user_id,
+              },
+            })) != null;
+        data.message.owner = chatUser.user_id == chat.user_id;
+        return data;
+      });
+    });
+  }
 
   async readMessages(body: any) {
     const messageOpenedUsers = await Promise.all(
       body.messages!.map(async (e: string) => {
-        var chatMessage = await ChatMessage.findOne({
-          include: {
-            model: ChatUser,
-            where: {
-              user_id: {
-                [Op.not]: body.user_id,
+        var chatMessage = await ChatMessage.findByPk(e,
+          {
+            include: {
+              model: ChatUser,
+              where: {
+                user_id: {
+                  [Op.not]: body.user_id,
+                },
               },
             },
-          },
-          where: {
-            id: e,
-          },
-        });
+          });
 
         return chatMessage
           ? await MessageOpenedUser.findOrCreate({
-              where: {
-                message_id: e,
-                user_id: body.user_id,
-              },
-            })
+            where: {
+              message_id: e,
+              user_id: body.user_id,
+            },
+          })
           : null;
       }),
     );

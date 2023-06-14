@@ -12,6 +12,7 @@ export async function toGetChatsResponseDTO(body: any, chat: Chat): Promise<GetC
         chat_id: chat.id,
       },
     },
+    limit: 50,
   });
 
   const chatUserCount = await ChatUser.count({

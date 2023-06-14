@@ -1,19 +1,25 @@
-import { handleErrorAsyncWS } from '../middlewares/errors/async_error_handler.middleware';
-import { ChatService } from '../services';
+import { handleErrorAsync, handleErrorAsyncWS } from '../middlewares/errors/async_error_handler.middleware';
+import { ChatService, EventService } from '../services';
 import { getInfoFromRequest } from '../helpers/jwt.helper';
 import SocketResponse from '../responses/socket.response';
 import ws from 'ws';
-import { ChatUser, MessageOpenedUser } from '../models';
-import { ChatValidator } from '../validators';
+import { ChatUser } from '../models';
+import { ChatValidator, EventValidator } from '../validators';
 
 export class SocketController {
   chatValidator = new ChatValidator();
+  eventValidator = new EventValidator();
+
   chatService = new ChatService();
+  eventService = new EventService();
+
   clients: Map<string, ws> = new Map();
   pingInterval = 15000;
 
   constructor() {
     setInterval(this.sendPingMessages, this.pingInterval);
+
+    this.chatService.onNewMessage(this.sendToChat);
   }
 
   sendPingMessages = () => {
@@ -28,112 +34,86 @@ export class SocketController {
 
   getMessages = handleErrorAsyncWS(async (ws, req) => {
     const decoded = await getInfoFromRequest(req);
-    //const wss = (req as any).getWss('v1/chat') as ws.Server;
+    //const wss = (req as any).getWss('v1/socket') as ws.Server;
 
     req.body.user_id = decoded.userId;
     this.chatValidator.getMessages(req.body);
 
     this.clients.set(req.body.user_id!, ws);
 
-    const data = await this.chatService.getAll(req.body);
-    ws.send(JSON.stringify(new SocketResponse({ name: 'start', data })));
+    this.onStart(ws, req);
 
     ws.onmessage = async (event) => {
       const eventData = JSON.parse(event.data.toString());
+      const body = eventData.body;
 
-      switch (eventData.name) {
-        case 'chat':
-          onChat(eventData);
-          break;
-        case 'add-contact':
-          break;
-        case 'new-message':
-          await onNewMessage(eventData);
-          break;
-        case 'open-messages':
-          onOpenMessages(eventData);
-          break;
+      try {
+        switch (eventData.name) {
+          case 'close-events':
+            await this.onGetCloseEvents(ws, body);
+            break;
+          case 'new-message':
+            body.user_id = decoded.userId;
+            await this.onNewMessage(body);
+            break;
+          case 'open-messages':
+            body.user_id = decoded.userId;
+            await this.onOpenMessages(body);
+            break;
+          case 'create-event':
+            body.organizer_id = decoded.userId;
+            await this.onCreateEvent(ws, body);
+            break;
+        }
+      } catch (e) {
+        console.log(e);
       }
     };
 
     ws.onclose = () => {
       this.clients.delete(req.body.user_id!);
     };
-
-    const onChat = async (eventData: any) => {
-      try {
-        /*const getMessagesRequestDTO = new GetMessagesRequestDTO();
-                getMessagesRequestDTO.user_id = decoded.userId;
-                getMessagesRequestDTO.chat_id = eventData.body;
-                await validateDTO(getMessagesRequestDTO);
-                data = await this.chatService.getMessages(getMessagesRequestDTO);
-                ws.send(JSON.stringify(new SocketResponse({ name: "messages", data })));*/
-      } catch (e) { }
-    };
-
-    const onOpenMessages = async (eventData: any) => {
-      eventData.body.user_id = decoded.userId;
-      this.chatValidator.onOpenMessages(eventData.body);
-      await this.chatService.readMessages(eventData.body);
-
-      const chatUserCount = await ChatUser.count({
-        where: {
-          chat_id: eventData.body.chat_id,
-        },
-      });
-
-      var messages: any[] = [];
-
-      await Promise.all(
-        eventData.body.messages!.map(async (id: string) => {
-          const messageOpenedUserCount = await MessageOpenedUser.count({
-            where: {
-              message_id: id,
-            },
-          });
-
-          messages.push({ id, read_all: chatUserCount - 1 == messageOpenedUserCount });
-        }),
-      );
-
-      sendToChat('opened-messages', eventData.body.chat_id!, async (chat: ChatUser) => {
-        return { chat_id: eventData.body.chat_id, messages: messages };
-      });
-    };
-
-    const onNewMessage = async (eventData: any) => {
-      try {
-        eventData.body.user_id = decoded.userId;
-        this.chatValidator.onNewMessage(eventData.body);
-        let data = await this.chatService.writeMessage(eventData.body);
-
-        sendToChat('new-message', eventData.body.chat_id!, async (chat: ChatUser) => {
-          data.message.opened =
-            eventData.body.user_id == chat.user_id
-              ? true
-              : (await MessageOpenedUser.findOne({
-                where: {
-                  message_id: data.message.id,
-                  user_id: chat.user_id,
-                },
-              })) != null;
-          data.message.owner = eventData.body.user_id == chat.user_id;
-          return data;
-        });
-      } catch (e) { }
-    };
-
-    const sendToChat = async (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => {
-      const chats = await ChatUser.findAll({
-        where: {
-          chat_id: chat_id,
-        },
-      });
-
-      chats.forEach(async (chat) => {
-        let data = await callback(chat);
-        this.clients.get(chat.user_id)?.send(JSON.stringify(new SocketResponse({ name: eventName, data })));
-      });
-    };
   });
+
+  onStart = async (ws: ws, req: any) => {
+    const chats = await this.chatService.getAll(req.body);
+    ws.send(JSON.stringify(new SocketResponse({ name: 'start', data: { chats } })));
+  }
+
+  onGetCloseEvents = async (ws: ws, body: any) => {
+    const events = await this.eventService.getCloseEvents(body);
+    ws.send(JSON.stringify(new SocketResponse({ name: 'close-events', data: events })));
+  }
+
+  onOpenMessages = async (body: any) => {
+    this.chatValidator.onOpenMessages(body);
+    this.chatService.onOpenMessages(body, this.sendToChat);
+  };
+
+  onNewMessage = async (body: any) => {
+    this.chatValidator.onNewMessage(body);
+    let data = await this.chatService.writeMessage(body);
+  };
+
+  onCreateEvent = async (ws: ws, body: any) => {
+    try {
+      this.eventValidator.onCreateEvent(body);
+      let data = await this.eventService.createEvent(body);
+    } catch (e: any) {
+      ws.send(JSON.stringify(new SocketResponse({ name: 'create-event-fail', data: e.data })));
+    }
+  };
+
+  sendToChat = async (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => {
+    const chats = await ChatUser.findAll({
+      where: {
+        chat_id: chat_id,
+      },
+    });
+
+    chats.forEach(async (chat) => {
+      let data = await callback(chat);
+      this.clients.get(chat.user_id)?.send(JSON.stringify(new SocketResponse({ name: eventName, data })));
+    });
+  };
 }
