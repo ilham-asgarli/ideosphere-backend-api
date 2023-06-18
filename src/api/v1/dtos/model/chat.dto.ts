@@ -9,6 +9,10 @@ export default class ChatDTO {
 
   @Expose()
   @IsDefined()
+  name?: string;
+
+  @Expose()
+  @IsDefined()
   @IsDate()
   created_at?: Date;
 

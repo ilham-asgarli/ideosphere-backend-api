@@ -25,7 +25,7 @@ export class ChatService {
     return all;
   }
 
-  async onOpenMessages(body: any, sendToChat: (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => any) {
+  async onOpenMessages(body: any, sendToUsers: (eventName: string, users: string[], callback: (user_id: string) => any) => any) {
     await this.readMessages(body);
 
     const chatUserCount = await ChatUser.count({
@@ -48,7 +48,7 @@ export class ChatService {
       }),
     );
 
-    sendToChat('opened-messages', body.chat_id!, async (chat: ChatUser) => {
+    sendToUsers('opened-messages', await this.getChatUsers(body.chat_id!), async (user_id: string) => {
       return { chat_id: body.chat_id, messages: messages };
     });
   }
@@ -69,26 +69,26 @@ export class ChatService {
     });
   }
 
-  async onNewMessage(sendToChat: (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => any) {
+  async onNewMessage(sendToUsers: (eventName: string, users: string[], callback: (user_id: string) => any) => any) {
     ChatMessage.afterCreate('newMessage', async (instance, options) => {
       const chatUser = await ChatUser.findByPk(instance.chat_user_id);
 
       if (chatUser == null)
         return
 
-      sendToChat('new-message', chatUser.chat_id!, async (chat: ChatUser) => {
+      sendToUsers('new-message', await this.getChatUsers(chatUser.chat_id!), async (user_id: string) => {
         let data = { chat_id: chatUser.chat_id!, message: await toWriteMessagesResponseDTO(chatUser, instance) }
 
         data.message.opened =
-          chatUser.user_id == chat.user_id
+          chatUser.user_id == user_id
             ? true
             : (await MessageOpenedUser.findOne({
               where: {
                 message_id: data.message.id,
-                user_id: chat.user_id,
+                user_id: user_id,
               },
             })) != null;
-        data.message.owner = chatUser.user_id == chat.user_id;
+        data.message.owner = chatUser.user_id == user_id;
         return data;
       });
     });
@@ -119,5 +119,17 @@ export class ChatService {
           : null;
       }),
     );
+  }
+
+  async getChatUsers(chat_id: string): Promise<string[]> {
+    const chats = await ChatUser.findAll({
+      where: {
+        chat_id: chat_id,
+      },
+    });
+
+    return chats.map((e) => {
+      return e.user_id;
+    });
   }
 }

@@ -7,6 +7,6 @@ const chatController = new ChatController();
 
 router.use(securedOperation());
 
-router.post('/message', chatController.newMessage);
+router.post('/:chat_id/message', chatController.newMessage);
 
 export default router;

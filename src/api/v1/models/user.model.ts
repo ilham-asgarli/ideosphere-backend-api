@@ -7,6 +7,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare user_type_id: ForeignKey<UserType['id']>;
   declare email: string;
   declare password: string;
+  declare balance: CreationOptional<number>;
   declare phone_number: string | null;
 }
 
@@ -35,6 +36,18 @@ User.init(
         len: [1, 25],
       },
     },
+    balance: {
+      type: DataTypes.DOUBLE,
+      defaultValue: 0,
+      allowNull: false,
+      validate: {
+        isAfterNow(value: number): void {
+          if (value < 0) {
+            throw new Error("Balance can't be negative.");
+          }
+        },
+      },
+    }
   },
   {
     sequelize,

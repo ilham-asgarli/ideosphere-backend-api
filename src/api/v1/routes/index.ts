@@ -8,7 +8,7 @@ const router = Router();
 
 router.use('/auth', auth);
 router.use('/socket', socket);
-router.use('/chat', chat);
-router.use('/event', event);
+router.use('/chats', chat);
+router.use('/events', event);
 
 export default router;

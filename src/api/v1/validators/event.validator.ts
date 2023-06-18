@@ -2,12 +2,12 @@ import Joi from "joi";
 import { validate } from "../helpers/validation.helper";
 
 export class EventValidator {
-    onCreateEvent(body: any) {
+    createEvent(body: any) {
         const schema = Joi.object({
             organizer_id: Joi.string().uuid().required(),
             gender_id: Joi.number().min(1).max(3).required(),
             name: Joi.string(),
-            description: Joi.string(),
+            description: Joi.string().min(0).max(3000),
             address: Joi.string(),
             max_age: Joi.number().integer(),
             min_age: Joi.number().integer(),

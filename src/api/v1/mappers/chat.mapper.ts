@@ -54,14 +54,7 @@ export async function toGetChatsResponseDTO(body: any, chat: Chat): Promise<GetC
 
   const getChatsResponseDTO = new GetChatsResponseDTO();
   getChatsResponseDTO.id = chat.id;
-  getChatsResponseDTO.name =
-    (
-      await Event.findOne({
-        where: {
-          chat_id: chat.id,
-        },
-      })
-    )?.name ?? '';
+  getChatsResponseDTO.name = chat.name;
   getChatsResponseDTO.messages = messages;
   getChatsResponseDTO.created_at = json['created_at'] as Date;
   return getChatsResponseDTO;

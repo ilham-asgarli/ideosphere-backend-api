@@ -9,8 +9,11 @@ export class ChatController {
 
     newMessage = handleErrorAsync(async (req, res) => {
         const decoded = await getInfoFromRequest(req);
+
         req.body.user_id = decoded.userId;
+        req.body.chat_id = req.params.chat_id;
         this.chatValidator.onNewMessage(req.body);
+        
         let data = await this.chatService.writeMessage(req.body);
     });
 }

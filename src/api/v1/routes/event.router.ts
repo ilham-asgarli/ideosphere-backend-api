@@ -7,6 +7,6 @@ const eventController = new EventController();
 
 router.use(securedOperation());
 
-//router.post('/', eventController.);
+router.post("/", eventController.createEvent);
 
 export default router;

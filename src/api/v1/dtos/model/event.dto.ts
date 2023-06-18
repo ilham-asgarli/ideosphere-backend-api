@@ -56,8 +56,8 @@ export default class EventDTO {
   entry_fee?: number;
 
   @Expose()
-  @Min(1)
-  participant_capacity?: number;
+  @Min(0)
+  participant_count?: number;
 
   @Expose()
   @IsDefined()

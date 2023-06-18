@@ -13,6 +13,7 @@ EventLocation.init(
   {
     id: {
       type: DataTypes.STRING,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     latitude: {

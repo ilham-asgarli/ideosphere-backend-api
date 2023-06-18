@@ -3,6 +3,7 @@ import { sequelize } from '../config/sequelize.config';
 
 class Chat extends Model<InferAttributes<Chat>, InferCreationAttributes<Chat>> {
   declare id: CreationOptional<string>;
+  declare name: string;
 }
 
 Chat.init(
@@ -11,6 +12,10 @@ Chat.init(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {

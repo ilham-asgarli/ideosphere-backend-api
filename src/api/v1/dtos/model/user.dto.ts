@@ -29,6 +29,11 @@ export default class UserDTO {
 
   @Expose()
   @IsDefined()
+  @Min(0)
+  balance?: number;
+
+  @Expose()
+  @IsDefined()
   @IsDate()
   created_at?: Date;
 

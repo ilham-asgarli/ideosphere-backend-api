@@ -1,9 +1,8 @@
-import { handleErrorAsync, handleErrorAsyncWS } from '../middlewares/errors/async_error_handler.middleware';
+import { handleErrorAsyncWS } from '../middlewares/errors/async_error_handler.middleware';
 import { ChatService, EventService } from '../services';
 import { getInfoFromRequest } from '../helpers/jwt.helper';
 import SocketResponse from '../responses/socket.response';
 import ws from 'ws';
-import { ChatUser } from '../models';
 import { ChatValidator, EventValidator } from '../validators';
 
 export class SocketController {
@@ -19,7 +18,7 @@ export class SocketController {
   constructor() {
     setInterval(this.sendPingMessages, this.pingInterval);
 
-    this.chatService.onNewMessage(this.sendToChat);
+    this.chatService.onNewMessage(this.sendToUsers);
   }
 
   sendPingMessages = () => {
@@ -60,10 +59,6 @@ export class SocketController {
             body.user_id = decoded.userId;
             await this.onOpenMessages(body);
             break;
-          case 'create-event':
-            body.organizer_id = decoded.userId;
-            await this.onCreateEvent(ws, body);
-            break;
         }
       } catch (e) {
         console.log(e);
@@ -87,7 +82,7 @@ export class SocketController {
 
   onOpenMessages = async (body: any) => {
     this.chatValidator.onOpenMessages(body);
-    this.chatService.onOpenMessages(body, this.sendToChat);
+    this.chatService.onOpenMessages(body, this.sendToUsers);
   };
 
   onNewMessage = async (body: any) => {
@@ -95,25 +90,10 @@ export class SocketController {
     let data = await this.chatService.writeMessage(body);
   };
 
-  onCreateEvent = async (ws: ws, body: any) => {
-    try {
-      this.eventValidator.onCreateEvent(body);
-      let data = await this.eventService.createEvent(body);
-    } catch (e: any) {
-      ws.send(JSON.stringify(new SocketResponse({ name: 'create-event-fail', data: e.data })));
-    }
-  };
-
-  sendToChat = async (eventName: string, chat_id: string, callback: (chat: ChatUser) => any) => {
-    const chats = await ChatUser.findAll({
-      where: {
-        chat_id: chat_id,
-      },
-    });
-
-    chats.forEach(async (chat) => {
-      let data = await callback(chat);
-      this.clients.get(chat.user_id)?.send(JSON.stringify(new SocketResponse({ name: eventName, data })));
+  sendToUsers = async (eventName: string, users: string[], callback: (user: string) => any) => {
+    users.forEach(async (user) => {
+      let data = await callback(user);
+      this.clients.get(user)?.send(JSON.stringify(new SocketResponse({ name: eventName, data })));
     });
   };
 }

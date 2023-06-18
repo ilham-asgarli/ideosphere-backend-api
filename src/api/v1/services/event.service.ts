@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
-import { EventDTO } from '../dtos/model';
+import { CompanyDTO, CustomerDTO, EventDTO, EventLocationDTO, UserDTO } from '../dtos/model';
 import { convertModeltoDTOJSON } from '../helpers/dto_model_convert.helper';
-import { Chat, Event, EventLocation, EventParticipant, EventTag } from '../models';
+import { Chat, ChatUser, Company, Customer, Event, EventLocation, EventParticipant, EventTag, User } from '../models';
 
 export class EventService {
 
@@ -32,9 +32,39 @@ export class EventService {
     return await Promise.all(
       eventLocations.map(async (eventLocation: EventLocation) => {
         const event = await Event.findByPk(eventLocation.event_id);
+        const organizer = await User.findByPk(event!.organizer_id);
+        const location = await EventLocation.findOne({
+          where: {
+            event_id: event!.id,
+          }
+        });
+        const customer = await Customer.findOne({
+          where: {
+            user_id: organizer!.id,
+          }
+        });
+
+        const company = await Company.findOne({
+          where: {
+            user_id: organizer!.id,
+          }
+        });
+
+        const eventResponse = convertModeltoDTOJSON(EventDTO, event!);
+        eventResponse.participant_count = await EventParticipant.count({
+          where: {
+            event_id: event!.id,
+          }
+        });
+        eventResponse.organizer = convertModeltoDTOJSON(UserDTO, organizer!);
+        if (customer)
+          eventResponse.organizer.customer = convertModeltoDTOJSON(CustomerDTO, customer!);
+        if (company)
+          eventResponse.organizer.company = convertModeltoDTOJSON(CompanyDTO, company!);
+        eventResponse.location = convertModeltoDTOJSON(EventLocationDTO, location!);
 
         return {
-          event: convertModeltoDTOJSON(EventDTO, event!),
+          event: eventResponse,
           distance: eventLocation.get('distance'),
         };
       })
@@ -42,7 +72,9 @@ export class EventService {
   }
 
   async createEvent(body: any) {
-    const chat = await Chat.create();
+    const chat = await Chat.create({ name: body.name });
+
+    const chatUser = await ChatUser.create({ chat_id: chat.id, user_id: body.organizer_id, });
 
     const event = await Event.create({
       name: body.name,
@@ -65,14 +97,16 @@ export class EventService {
       event_id: event.id,
     });
 
-    await Promise.all(
-      (body.tags as string[]).map(async (tag) => {
-        await EventTag.create({
-          tag: tag,
-          event_id: event.id,
-        });
-      }),
-    );
+    if (body.tags) {
+      await Promise.all(
+        (body.tags as string[]).map(async (tag) => {
+          await EventTag.create({
+            tag: tag,
+            event_id: event.id,
+          });
+        }),
+      );
+    }
   }
 
   async joinEvent(body: any) {
