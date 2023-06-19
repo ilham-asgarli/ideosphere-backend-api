@@ -16,4 +16,15 @@ export class EventController {
         const data = await this.eventService.createEvent(req.body);
         res.status(204).end();
     });
+
+    joinEvent = handleErrorAsync(async (req, res) => {
+        const decoded = await getInfoFromRequest(req);
+
+        req.body.user_id = decoded.userId;
+        req.body.event_id = req.params.event_id;
+        this.eventValidator.joinEvent(req.body);
+
+        const data = await this.eventService.joinEvent(req.body);
+        res.status(204).end();
+    });
 }

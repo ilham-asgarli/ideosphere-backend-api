@@ -8,5 +8,6 @@ const eventController = new EventController();
 router.use(securedOperation());
 
 router.post("/", eventController.createEvent);
+router.post("/:event_id/participant", eventController.joinEvent);
 
 export default router;

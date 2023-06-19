@@ -19,6 +19,7 @@ export class SocketController {
     setInterval(this.sendPingMessages, this.pingInterval);
 
     this.chatService.onNewMessage(this.sendToUsers);
+    this.chatService.onNewUser(this.sendToUsers);
   }
 
   sendPingMessages = () => {
@@ -49,6 +50,7 @@ export class SocketController {
       try {
         switch (eventData.name) {
           case 'close-events':
+            body.user_id = decoded.userId;
             await this.onGetCloseEvents(ws, body);
             break;
           case 'new-message':

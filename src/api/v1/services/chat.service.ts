@@ -3,6 +3,8 @@ import { GetChatsResponseDTO } from '../dtos/response';
 import { BadRequestError } from '../errors';
 import { toGetChatsResponseDTO, toWriteMessagesResponseDTO } from '../mappers/chat.mapper';
 import { Chat, ChatMessage, ChatUser, MessageOpenedUser } from '../models';
+import { convertModeltoDTOJSON } from '../helpers/dto_model_convert.helper';
+import { ChatDTO } from '../dtos/model';
 
 export class ChatService {
   async getAll(body: any): Promise<GetChatsResponseDTO[]> {
@@ -89,6 +91,17 @@ export class ChatService {
               },
             })) != null;
         data.message.owner = chatUser.user_id == user_id;
+        return data;
+      });
+    });
+  }
+
+  async onNewUser(sendToUsers: (eventName: string, users: string[], callback: (user_id: string) => any) => any) {
+    ChatUser.afterCreate('newUser', async (instance, options) => {
+      const chat = await Chat.findByPk(instance.chat_id);
+
+      sendToUsers('add-contact', await this.getChatUsers(instance.chat_id), async (user_id: string) => {
+        let data = convertModeltoDTOJSON(ChatDTO, chat!);
         return data;
       });
     });

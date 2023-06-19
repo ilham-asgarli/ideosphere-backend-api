@@ -1,7 +1,8 @@
-import { Sequelize } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { CompanyDTO, CustomerDTO, EventDTO, EventLocationDTO, UserDTO } from '../dtos/model';
 import { convertModeltoDTOJSON } from '../helpers/dto_model_convert.helper';
 import { Chat, ChatUser, Company, Customer, Event, EventLocation, EventParticipant, EventTag, User } from '../models';
+import { CustomError, UnauthenticatedError, UnauthorizedError } from '../errors';
 
 export class EventService {
 
@@ -9,6 +10,14 @@ export class EventService {
 
   async getCloseEvents(body: any): Promise<any> {
     const eventLocations = await EventLocation.findAll({
+      include: {
+        model: Event,
+        where: {
+          organizer_id: {
+            [Op.not]: body.user_id,
+          },
+        },
+      },
       attributes: {
         include: [
           [
@@ -24,7 +33,7 @@ export class EventService {
           ],
         ],
       },
-      having: Sequelize.literal(`distance <= ${body.radius / 1000}`), // Convert radius from meters to kilometers
+      having: Sequelize.literal(`distance <= ${body.radius}`),
       order: [[Sequelize.literal('distance'), 'ASC']],
       limit: 50,
     });
@@ -56,6 +65,12 @@ export class EventService {
             event_id: event!.id,
           }
         });
+        eventResponse.joined = await EventParticipant.findOne({
+          where: {
+            event_id: event!.id,
+            user_id: body.user_id,
+          }
+        }) != null;
         eventResponse.organizer = convertModeltoDTOJSON(UserDTO, organizer!);
         if (customer)
           eventResponse.organizer.customer = convertModeltoDTOJSON(CustomerDTO, customer!);
@@ -112,19 +127,30 @@ export class EventService {
   async joinEvent(body: any) {
     const event = await Event.findByPk(body.event_id);
 
+    if (event?.organizer_id == body.user_id)
+      throw new UnauthorizedError();
+
     const eventParticipantCount = await EventParticipant.count({
       where: {
         event_id: body.event_id,
       }
     });
 
-    if (event == null || event?.participant_capacity == null || event?.participant_capacity <= eventParticipantCount) {
-      return;
-    }
+    if (event == null)
+      throw new CustomError({message: "Wrong event."});
 
-    const eventParticipant = await EventParticipant.create({
-      event_id: body.event_id,
-      user_id: body.user_id,
+    if (event?.participant_capacity != null && event?.participant_capacity <= eventParticipantCount)
+    throw new CustomError({message: "Quota is full."});
+
+    const [eventParticipant, created] = await EventParticipant.findOrCreate({
+      where: {
+        event_id: body.event_id,
+        user_id: body.user_id,
+      },
     });
+
+    if(!created) {
+      throw new CustomError({message: "Joined before."});
+    }
   }
 }
